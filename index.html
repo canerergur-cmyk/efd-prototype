@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFD — Clickable Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --paper: #fafaf7;
+    --card: #ffffff;
+    --gray-soft: #f5f5f2;
+    --gray-mid: #d0d0cc;
+    --gray-text: #8a8a85;
+    --gray-text-strong: #555;
+    --gray-line: #ececea;
+    --highlight: #fd5151;
+    --highlight-1: rgba(253, 81, 81, 0.25);
+    --highlight-2: rgba(253, 81, 81, 0.55);
+    --highlight-3: rgba(253, 81, 81, 0.85);
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 8px 28px rgba(0,0,0,0.06);
+    --shadow-phone: 0 40px 80px -20px rgba(0,0,0,0.5), 0 0 0 8px #1a1a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: #1a1a1a;
+    color: white;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ============ PROTOTYPE CONTROLS ============ */
+  .proto-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px 40px;
+    gap: 24px;
+    position: relative;
+  }
+
+  .proto-controls {
+    background: #2a2a2a;
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    z-index: 100;
+  }
+
+  .proto-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .proto-title .red { color: var(--highlight); }
+
+  .proto-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .proto-current {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .proto-current span { color: var(--highlight); font-weight: 700; }
+
+  .proto-select {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .proto-btn {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .proto-btn:hover { background: rgba(255,255,255,0.15); }
+
+  /* ============ PHONE FRAME ============ */
+  .phone {
+    width: 380px;
+    height: 824px;
+    background: var(--paper);
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-phone);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 14px; left: 50%; transform: translateX(-50%);
+    width: 106px; height: 28px;
+    background: #1a1a1a; border-radius: 14px; z-index: 100;
+  }
+
+  .phone-status {
+    position: absolute;
+    top: 19px; left: 30px; right: 30px;
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-weight: 600; color: var(--black); z-index: 50;
+  }
+
+  /* ============ SCREEN BASE ============ */
+  .scrn {
+    position: absolute;
+    inset: 0;
+    padding: 64px 16px 24px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    background: var(--paper);
+    color: var(--black);  /* CRITICAL: override body white color */
+  }
+  .scrn.active { display: flex; }
+
+  /* small visual transition */
+  .scrn.active {
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* clickable hint utility */
+  [data-nav], .clickable {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ============ SPLASH ============ */
+  #splash {
+    background: white;
+    padding: 80px 28px 40px;
+    justify-content: flex-start;
+  }
+  #splash .word {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 72px;
+    line-height: 0.85;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-top: auto; margin-bottom: auto;
+  }
+  #splash .word .ast { color: var(--highlight); }
+  #splash .footer {
+    font-size: 14px;
+    color: var(--black);
+    max-width: 240px;
+    line-height: 1.4;
+  }
+
+  /* ============ TODAY ============ */
+  #today .greet-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px 14px;
+  }
+  #today .pic { display: flex; align-items: center; gap: 10px; }
+  #today .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--black); }
+  #today .greeting { font-size: 15px; font-weight: 600; }
+  #today .menu-link { font-size: 13px; color: var(--gray-text-strong); font-weight: 500; }
+
+  /* Hamburger menu button + popup (Today header) */
+  #today .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+    cursor: pointer;
+  }
+  #today .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--black);
+    border-radius: 1px;
+  }
+
+  #today .today-menu-popup {
+    position: absolute;
+    top: 58px;
+    right: 12px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+    padding: 4px 0;
+    min-width: 170px;
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  #today .today-menu-popup.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  #today .menu-item-popup {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px solid var(--gray-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--black);
+  }
+  #today .menu-item-popup:last-child { border-bottom: none; }
+  #today .menu-item-popup:hover { background: var(--gray-soft); }
+  #today .menu-item-popup .mi-arrow {
+    color: var(--gray-mid);
+    font-size: 16px;
+  }
+
+  /* Main goal card */
+  #today .main-card {
+    background: var(--card);
+    border-radius: 22px;
+    box-shadow: var(--shadow-card);
+    padding: 16px 16px 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+
+  #today .mc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+  #today .mc-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.015em; color: var(--black); }
+  #today .mc-date-meta { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; text-align: right; }
+  #today .mc-date { font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--gray-text-strong); text-align: right; }
+
+  #today .mc-body {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  #today .subgoals { display: flex; flex-direction: column; gap: 2px; }
+  #today .subgoal {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25;
+    color: var(--black);
+    padding: 4px 0;
+    position: relative;
+    align-self: flex-start;
+  }
+  #today .subgoal.done { color: var(--gray-mid); }
+  #today .subgoal.done::after {
+    content: '';
+    position: absolute;
+    left: -3px; right: -3px;
+    top: 50%; height: 7px;
+    background: var(--highlight);
+    z-index: 1;
+    transform: translateY(-50%);
+    border-radius: 1px;
+  }
+
+  /* Big SVG asterisk */
+  #today .big-ast-wrap {
+    width: 150px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px;
+  }
+  #today .big-ast-svg { width: 150px; height: 150px; display: block; }
+  #today .big-ast-svg .ast-outline rect { fill: var(--black); transition: fill 0.4s ease; }
+  #today .big-ast-svg .ast-interior rect { fill: white; }
+  #today .big-ast-svg .ast-fill-rect { fill: var(--highlight); transition: y 0.5s ease, height 0.5s ease; }
+  #today .big-ast-svg.complete .ast-outline rect { fill: var(--highlight); }
+  #today .ast-fraction {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 600;
+    color: var(--gray-text-strong);
+    letter-spacing: 0.04em;
+  }
+  #today .ast-fraction.complete { color: var(--highlight); }
+
+  /* Mini calendar */
+  #today .mini-cal { border-top: 1px solid var(--gray-line); padding-top: 16px; }
+  #today .cal-month { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+  #today .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px 4px; }
+  #today .cal-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-align: center; font-weight: 500; padding-bottom: 2px; }
+  #today .cal-day {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 6px 0 10px;
+    min-height: 50px;
+    position: relative;
+  }
+  #today .cal-day .day-num { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; color: var(--gray-text-strong); }
+  #today .cal-day.future .day-num { color: var(--gray-mid); }
+  #today .cal-ast {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900; font-size: 36px; line-height: 1;
+    background: linear-gradient(to top, var(--highlight) 0%, var(--highlight) var(--cal-fill, 0%), transparent var(--cal-fill, 0%));
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--black);
+    transform: translateY(4%);
+  }
+  #today .cal-ast.complete { -webkit-text-stroke-color: var(--highlight); }
+  #today .cal-day.has-progress .day-num { display: none; }
+  #today .cal-day:not(.has-progress) .cal-ast { display: none; }
+  #today .cal-day.today .day-num {
+    background: var(--gray-soft); color: var(--black); font-weight: 700;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* Other goals scroll */
+  #today .other-goals { margin-bottom: 16px; }
+  #today .og-label {
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--gray-text); text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600;
+    margin: 4px 8px 12px;
+  }
+  #today .scroll-row { display: flex; gap: 10px; overflow-x: auto; padding: 0 8px 4px; scrollbar-width: none; }
+  #today .scroll-row::-webkit-scrollbar { display: none; }
+  #today .goal-card {
+    flex-shrink: 0; width: 134px;
+    padding: 14px;
+    background: var(--gray-soft);
+    border-radius: 16px;
+    cursor: pointer;
+  }
+  #today .goal-card.featured { background: var(--highlight); }
+  #today .gc-title { font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 18px; text-transform: uppercase; line-height: 0.95; margin-bottom: 8px; }
+  #today .gc-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text-strong); text-transform: uppercase; }
+  #today .goal-card.featured .gc-meta { color: var(--black); opacity: 0.7; }
+
+  #today .cta-bar {
+    position: absolute;
+    left: 16px; right: 16px;
+    bottom: 24px;
+    z-index: 20;
+  }
+  #today .cta-bar .cta {
+    background: var(--black); color: white;
+    padding: 16px;
+    text-align: center;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    cursor: pointer;
+  }
+  #today .cta-bar .cta .red { color: var(--highlight); }
+
+  #today { padding-bottom: 96px; }
+
+  /* ============ SHARED: TOP BAR ============ */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .tb-back { font-size: 28px; line-height: 0.8; color: var(--black); width: 32px; cursor: pointer; padding: 0; }
+  .tb-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; }
+  .tb-action { font-size: 22px; line-height: 0.5; letter-spacing: 3px; color: var(--black); width: 32px; text-align: right; cursor: pointer; }
+
+  /* ============ GOAL DETAIL ============ */
+  #goal-detail .hero-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.05; letter-spacing: -0.015em; margin-bottom: 8px; }
+  #goal-detail .hero-stats { display: flex; gap: 14px; margin-bottom: 22px; }
+  #goal-detail .hero-stat { display: flex; flex-direction: column; gap: 1px; }
+  #goal-detail .hero-stat .num { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 22px; line-height: 1; }
+  #goal-detail .hero-stat .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-text); font-weight: 500; }
+  #goal-detail .ast-inline { color: var(--highlight); margin-left: 2px; }
+
+  /* Today card inside Goal Detail */
+  #goal-detail .gd-today-card { background: var(--card); border-radius: 16px; padding: 14px; box-shadow: var(--shadow-card); margin-bottom: 22px; }
+  #goal-detail .gd-tc-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  #goal-detail .gd-tc-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; }
+  #goal-detail .gd-tc-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text-strong); font-weight: 500; }
+  #goal-detail .gd-tc-body { display: grid; grid-template-columns: 1fr 92px; gap: 12px; align-items: center; }
+  #goal-detail .gd-tasks { display: flex; flex-direction: column; gap: 2px; }
+  #goal-detail .gd-task { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; padding: 4px 0; position: relative; cursor: pointer; align-self: flex-start; }
+  #goal-detail .gd-task.done { color: var(--gray-mid); }
+  #goal-detail .gd-task.done::after { content: ''; position: absolute; left: -3px; right: -3px; top: 50%; height: 6px; background: var(--highlight); transform: translateY(-50%); border-radius: 1px; z-index: 1; }
+  #goal-detail .gd-ast-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  #goal-detail .gd-ast-svg { width: 92px; height: 92px; display: block; }
+  #goal-detail .gd-ast-svg .ast-outline rect { fill: var(--black); transition: fill 0.4s ease; }
+  #goal-detail .gd-ast-svg .ast-interior rect { fill: white; }
+  #goal-detail .gd-ast-svg .ast-fill-rect { fill: var(--highlight); transition: y 0.5s ease, height 0.5s ease; }
+  #goal-detail .gd-ast-svg.complete .ast-outline rect { fill: var(--highlight); }
+  #goal-detail .gd-fraction { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--gray-text-strong); letter-spacing: 0.04em; transition: color 0.3s ease; }
+  #goal-detail .gd-fraction.complete { color: var(--highlight); }
+
+  /* Section block (used by all sections in Goal Detail) */
+  #goal-detail .section-block { margin-bottom: 22px; }
+  #goal-detail .sb-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  #goal-detail .sb-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; }
+  #goal-detail .sb-action { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text-strong); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Bar chart (replaces heatmap) */
+  #goal-detail .bar-chart {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 12px 12px;
+    box-shadow: var(--shadow-card);
+  }
+  #goal-detail .bc-body {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  #goal-detail .bc-y-axis {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    padding-bottom: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-text);
+    font-weight: 600;
+    line-height: 1;
+  }
+  #goal-detail .bc-bars-wrap {
+    position: relative;
+    height: 110px;
+  }
+  #goal-detail .bc-bars {
+    position: relative;
+    height: 100%;
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    z-index: 2;
+  }
+  #goal-detail .bc-grid {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--gray-line);
+    pointer-events: none;
+    z-index: 1;
+  }
+  #goal-detail .bc-grid.l1 { bottom: 33.3%; }
+  #goal-detail .bc-grid.l2 { bottom: 66.6%; }
+  #goal-detail .bc-grid.l3 { bottom: calc(100% - 1px); }
+  #goal-detail .bc-grid.base { bottom: 0; border-top-style: solid; border-top-color: var(--gray-mid); }
+  #goal-detail .bc-bar {
+    flex: 1;
+    background: var(--highlight);
+    border-radius: 3px 3px 0 0;
+    min-height: 0;
+    transition: height 0.4s ease;
+  }
+  #goal-detail .bc-bar.empty {
+    background: transparent;
+    border: 1px dashed var(--gray-line);
+    border-bottom: none;
+    height: 4px !important;
+  }
+  #goal-detail .bc-x-axis {
+    display: flex;
+    gap: 6px;
+    padding-left: 26px;
+    margin-top: 6px;
+  }
+  #goal-detail .bc-x-label {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-text);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  #goal-detail .bc-x-label.today {
+    color: var(--black);
+    font-weight: 700;
+  }
+
+  /* Sub-tasks list */
+  #goal-detail .subtasks-card { background: var(--card); border-radius: 14px; box-shadow: var(--shadow-card); overflow: hidden; }
+  #goal-detail .st-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-line); }
+  #goal-detail .st-row:last-child { border-bottom: none; }
+  #goal-detail .st-name { font-size: 14px; font-weight: 500; }
+  #goal-detail .st-freq { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Notes */
+  #goal-detail .notes-card { background: var(--card); border-radius: 14px; padding: 14px; box-shadow: var(--shadow-card); cursor: pointer; }
+  #goal-detail .notes-text { font-size: 13px; color: var(--gray-text-strong); line-height: 1.5; font-style: italic; }
+
+  /* ··· Menu popover */
+  #goal-detail .menu-popover {
+    position: absolute;
+    top: 60px; right: 22px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    padding: 4px 0;
+    min-width: 140px;
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  #goal-detail .menu-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  #goal-detail .menu-item { padding: 11px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--gray-line); }
+  #goal-detail .menu-item:last-child { border-bottom: none; }
+  #goal-detail .menu-item:hover { background: var(--gray-soft); }
+  #goal-detail .menu-item.danger { color: var(--highlight); font-weight: 700; }
+
+  /* ============ ADD GOAL ============ */
+  #add-goal .ag-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--gray-line); margin-bottom: 18px; }
+  #add-goal .ag-cancel { font-size: 13px; color: var(--gray-text-strong); font-weight: 500; cursor: pointer; }
+  #add-goal .ag-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  #add-goal .ag-save { font-size: 13px; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; pointer-events: none; }
+  #add-goal .ag-save.enabled { color: var(--highlight); pointer-events: auto; }
+
+  #add-goal .form-section { margin-bottom: 22px; }
+  #add-goal .form-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px; }
+
+  #add-goal .goal-name-input { width: 100%; background: transparent; border: none; outline: none; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.05; text-transform: uppercase; color: var(--black); letter-spacing: -0.01em; padding: 4px 0; border-bottom: 1.5px solid var(--gray-line); }
+  #add-goal .goal-name-input::placeholder { color: var(--gray-mid); font-weight: 800; }
+  #add-goal .goal-name-input:focus { border-bottom-color: var(--black); }
+
+  #add-goal .task-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  #add-goal .task-list:empty { margin-bottom: 0; }
+  #add-goal .task-item { background: var(--card); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-card); }
+  #add-goal .task-bullet { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 18px; line-height: 0.55; color: var(--highlight); -webkit-text-stroke: 1.5px var(--black); width: 14px; text-align: center; }
+  #add-goal .task-text { flex: 1; font-size: 14px; font-weight: 500; }
+  #add-goal .task-remove { font-size: 11px; color: var(--gray-text); cursor: pointer; padding: 4px; }
+
+  #add-goal .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  #add-goal .task-input { flex: 1; background: var(--card); border: 1.5px solid var(--gray-line); border-radius: 10px; padding: 11px 14px; font-size: 14px; font-weight: 500; outline: none; transition: border-color 0.2s ease; }
+  #add-goal .task-input:focus { border-color: var(--black); background: white; }
+  #add-goal .add-btn { background: var(--gray-soft); color: var(--gray-mid); border: none; border-radius: 10px; padding: 0 16px; font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+  #add-goal .add-btn.enabled { background: var(--black); color: white; }
+
+  #add-goal .chip-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  #add-goal .chip { background: var(--gray-soft); border: 1px solid transparent; border-radius: 16px; padding: 6px 12px; font-size: 12px; font-weight: 500; color: var(--gray-text-strong); cursor: pointer; transition: all 0.2s ease; }
+  #add-goal .chip:hover { background: var(--gray-line); color: var(--black); }
+  #add-goal .chip.used { background: white; color: var(--highlight); border-color: var(--highlight); }
+
+  #add-goal .setting-row { display: flex; justify-content: space-between; align-items: center; background: var(--card); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-card); cursor: pointer; }
+  #add-goal .label-text { font-weight: 600; font-size: 14px; }
+  #add-goal .value-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-text-strong); text-transform: uppercase; }
+  #add-goal .caret { color: var(--gray-mid); font-size: 16px; margin-left: 8px; }
+
+  /* ============ PROFILE ============ */
+  #profile .profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  #profile .avatar-big { width: 56px; height: 56px; border-radius: 50%; background: var(--black); }
+  #profile .p-name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; }
+  #profile .p-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); font-weight: 500; margin-top: 4px; }
+
+  #profile .stat-hero { background: var(--card); border-radius: 16px; padding: 22px 18px; box-shadow: var(--shadow-card); text-align: center; margin-bottom: 10px; }
+  #profile .stat-hero-num { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 54px; line-height: 0.9; }
+  #profile .stat-hero-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-top: 6px; }
+
+  #profile .stat-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; }
+  #profile .stat-small { background: var(--card); border-radius: 14px; padding: 14px 12px; box-shadow: var(--shadow-card); text-align: center; }
+  #profile .stat-small .num { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 28px; line-height: 0.9; }
+  #profile .stat-small .num.red { color: var(--highlight); }
+  #profile .stat-small .lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-top: 4px; }
+
+  #profile .sb-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  #profile .sb-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; }
+  #profile .sb-action { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text-strong); text-transform: uppercase; letter-spacing: 0.04em; }
+  #profile .section-block { margin-bottom: 22px; }
+
+  #profile .badges-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  #profile .badge { aspect-ratio: 1; background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+  #profile .badge.dim { opacity: 0.3; }
+  #profile .badge-ast { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 22px; line-height: 0.55; color: var(--highlight); -webkit-text-stroke: 1.5px var(--black); }
+  #profile .badge.dim .badge-ast { color: transparent; -webkit-text-stroke: 1.5px var(--gray-mid); }
+  #profile .badge-num { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700; color: var(--gray-text-strong); }
+
+  #profile .nav-card { background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; }
+  #profile .nav-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--gray-line); cursor: pointer; }
+  #profile .nav-row:last-child { border-bottom: none; }
+  #profile .nav-row:hover { background: var(--gray-soft); }
+  #profile .nav-row .name { font-weight: 600; font-size: 14px; }
+  #profile .nav-row .arrow { color: var(--gray-mid); font-size: 16px; }
+
+  /* ============ STATS ============ */
+  #stats .period-toggle { display: flex; background: var(--gray-soft); border-radius: 10px; padding: 3px; margin-bottom: 22px; }
+  #stats .pt-item { flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 600; border-radius: 7px; color: var(--gray-text); cursor: pointer; transition: all 0.2s ease; }
+  #stats .pt-item.active { background: white; color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+  #stats .year-card { background: var(--card); border-radius: 14px; padding: 14px 12px; box-shadow: var(--shadow-card); margin-bottom: 22px; }
+  #stats .month-labels { display: grid; grid-template-columns: repeat(12, 1fr); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--gray-text); text-transform: uppercase; }
+  #stats .ml { text-align: left; padding-left: 2px; }
+  #stats .year-grid { display: grid; grid-template-columns: repeat(26, 1fr); gap: 1.5px; margin-bottom: 10px; }
+  #stats .yc { aspect-ratio: 1; background: var(--gray-line); border-radius: 1px; }
+  #stats .yc.l1 { background: var(--highlight-1); }
+  #stats .yc.l2 { background: var(--highlight-2); }
+  #stats .yc.l3 { background: var(--highlight); }
+  #stats .year-foot { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--gray-text); text-transform: uppercase; }
+
+  #stats .stat-list { background: var(--card); border-radius: 14px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 14px; }
+  #stats .stat-list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-line); font-size: 13px; }
+  #stats .stat-list-row:last-child { border-bottom: none; }
+  #stats .stat-list-row .name { font-weight: 500; }
+  #stats .stat-list-row .v { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; }
+
+  /* ============ ARCHIVE ============ */
+  #archive .archive-header { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 28px; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.005em; margin-bottom: 4px; }
+  #archive .archive-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 18px; }
+  #archive .filter-row { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
+  #archive .filter-chip { background: var(--gray-soft); border-radius: 14px; padding: 5px 12px; font-size: 11px; font-weight: 600; color: var(--gray-text-strong); white-space: nowrap; cursor: pointer; }
+  #archive .filter-chip.active { background: var(--black); color: white; }
+
+  #archive .arch-item { background: var(--card); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-card); margin-bottom: 8px; cursor: pointer; }
+  #archive .arch-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  #archive .arch-name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; line-height: 1.2; }
+  #archive .arch-status { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; font-weight: 700; }
+  #archive .arch-status.complete { background: var(--highlight); color: white; }
+  #archive .arch-status.paused { background: var(--gray-soft); color: var(--gray-text-strong); }
+  #archive .arch-status.partial { background: white; color: var(--gray-text-strong); border: 1px solid var(--gray-line); }
+  #archive .arch-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text); text-transform: uppercase; margin-bottom: 8px; }
+  #archive .arch-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid var(--gray-line); }
+  #archive .arch-detail { font-size: 11px; color: var(--gray-text-strong); }
+  #archive .arch-pct { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 18px; }
+  #archive .arch-pct.red { color: var(--highlight); }
+
+  /* ============ SETTINGS ============ */
+  #settings .sec-group { margin-bottom: 22px; }
+  #settings .sec-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px; }
+  #settings .set-card { background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; }
+  #settings .set-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 14px; border-bottom: 1px solid var(--gray-line); cursor: pointer; }
+  #settings .set-row:last-child { border-bottom: none; }
+  #settings .set-row:hover { background: var(--gray-soft); }
+  #settings .set-name { font-weight: 600; font-size: 14px; }
+  #settings .set-name .soon-badge { background: var(--gray-line); color: var(--gray-text); font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 8px; text-transform: uppercase; }
+  #settings .set-right { display: flex; align-items: center; gap: 8px; }
+  #settings .set-value { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-text-strong); text-transform: uppercase; }
+  #settings .set-arrow { color: var(--gray-mid); font-size: 16px; }
+  #settings .set-row.disabled { opacity: 0.55; cursor: not-allowed; }
+  #settings .set-row.disabled:hover { background: transparent; }
+  #settings .set-row.danger .set-name { color: var(--highlight); }
+  #settings .ios-toggle { width: 36px; height: 22px; background: var(--gray-line); border-radius: 11px; position: relative; cursor: pointer; }
+  #settings .ios-toggle.on { background: var(--highlight); }
+  #settings .ios-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.2s ease; }
+  #settings .ios-toggle.on::after { left: 16px; }
+  #settings .about-link { text-align: center; margin-top: 24px; padding: 14px; font-size: 13px; font-weight: 500; color: var(--gray-text-strong); cursor: pointer; }
+
+  /* ============ ABOUT ============ */
+  #about .about-word { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 44px; line-height: 0.88; text-transform: uppercase; letter-spacing: -0.02em; margin: 36px 0 4px; }
+  #about .about-word .red { color: var(--highlight); }
+  #about .about-version { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-text); margin-bottom: 30px; }
+  #about .about-credits { background: var(--card); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow-card); margin-bottom: 18px; }
+  #about .credit-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+  #about .credit-row .lbl { color: var(--gray-text); font-weight: 500; }
+  #about .credit-row .val { font-weight: 600; }
+  #about .about-tagline { font-size: 13px; color: var(--gray-text-strong); line-height: 1.5; margin-bottom: 20px; font-style: italic; }
+  #about .about-links { background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 20px; }
+  #about .ab-link-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-line); font-size: 13px; font-weight: 500; cursor: pointer; }
+  #about .ab-link-row:last-child { border-bottom: none; }
+  #about .ab-link-row .arrow { color: var(--gray-mid); font-size: 14px; }
+  #about .about-quote { margin-top: auto; padding-top: 24px; text-align: center; font-size: 13px; color: var(--gray-text); font-style: italic; line-height: 1.5; max-width: 220px; align-self: center; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--black);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 200;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* hint card */
+  .hint {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    max-width: 380px;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* small-screen wrap */
+  @media (max-width: 480px) {
+    .proto-shell { padding: 16px 8px; }
+    .phone { width: 100%; max-width: 380px; height: auto; aspect-ratio: 380 / 824; }
+    .proto-controls { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="proto-shell">
+
+  <!-- Controls -->
+  <div class="proto-controls">
+    <span class="proto-title">EFD <span class="red">*</span> Prototype</span>
+    <span class="proto-divider"></span>
+    <span class="proto-current">Now: <span id="currentName">Splash</span></span>
+    <span class="proto-divider"></span>
+    <select class="proto-select" id="screenSelect">
+      <option value="splash">Splash</option>
+      <option value="today">Today</option>
+      <option value="goal-detail">Goal Detail</option>
+      <option value="add-goal">Add Goal</option>
+      <option value="profile">Profile</option>
+      <option value="stats">Detailed Stats</option>
+      <option value="archive">Archive</option>
+      <option value="settings">Settings</option>
+      <option value="about">About</option>
+    </select>
+    <button class="proto-btn" id="resetBtn">Reset</button>
+  </div>
+
+  <div class="hint">Tap things in the phone. Goal card → detail. CTA → add. Avatar → profile.</div>
+
+  <!-- PHONE -->
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-status"><span>9:41</span><span>•••</span></div>
+
+    <!-- ============ SPLASH ============ -->
+    <div class="scrn active" id="splash" data-nav="today">
+      <div class="word">Every<br>F<span class="ast">*</span>cking<br>Day</div>
+      <div class="footer">You don't have to do this, you know?</div>
+    </div>
+
+    <!-- ============ TODAY ============ -->
+    <div class="scrn" id="today">
+      <div class="greet-row">
+        <div class="pic clickable" data-nav="profile">
+          <div class="avatar"></div>
+          <div class="greeting">Hi, Alex</div>
+        </div>
+        <div class="hamburger clickable" id="todayMenuBtn">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="today-menu-popup" id="todayMenuPopup">
+          <div class="menu-item-popup" data-nav="profile">
+            <span>Account</span><span class="mi-arrow">›</span>
+          </div>
+          <div class="menu-item-popup" data-nav="settings">
+            <span>Settings</span><span class="mi-arrow">›</span>
+          </div>
+          <div class="menu-item-popup" data-nav="about">
+            <span>About</span><span class="mi-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-card clickable" data-nav="goal-detail">
+        <div class="mc-top">
+          <div>
+            <div class="mc-title">Spring routine</div>
+          </div>
+          <div>
+            <div class="mc-date-meta">Day 142</div>
+            <div class="mc-date">Fri 15 May</div>
+          </div>
+        </div>
+
+        <div class="mc-body">
+          <div class="subgoals" onclick="event.stopPropagation()">
+            <div class="subgoal done" data-task="t1">Read 10 pages</div>
+            <div class="subgoal done" data-task="t2">100 push-ups</div>
+            <div class="subgoal" data-task="t3">Call mom</div>
+          </div>
+          <div class="big-ast-wrap">
+            <svg class="big-ast-svg" id="todayAstSvg" viewBox="0 0 100 100">
+              <defs>
+                <clipPath id="todayClip">
+                  <rect x="45" y="3" width="10" height="94" rx="2" />
+                  <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)" />
+                  <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)" />
+                </clipPath>
+              </defs>
+              <g class="ast-outline">
+                <rect x="43" y="1" width="14" height="98" rx="2.5" />
+                <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)" />
+                <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)" />
+              </g>
+              <g class="ast-interior">
+                <rect x="45" y="3" width="10" height="94" rx="2" />
+                <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)" />
+                <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)" />
+              </g>
+              <g clip-path="url(#todayClip)">
+                <rect class="ast-fill-rect" id="todayAstFill" x="0" y="34" width="100" height="66" />
+              </g>
+            </svg>
+            <div class="ast-fraction" id="todayAstFraction">2/3</div>
+          </div>
+        </div>
+
+        <div class="mini-cal">
+          <div class="cal-month">May</div>
+          <div class="cal-grid">
+            <div class="cal-head">M</div><div class="cal-head">T</div><div class="cal-head">W</div><div class="cal-head">T</div><div class="cal-head">F</div><div class="cal-head">S</div><div class="cal-head">S</div>
+
+            <div class="cal-day has-progress"><span class="day-num">4</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">5</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">6</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
+            <div class="cal-day"><span class="day-num">7</span><span class="cal-ast">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">8</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">9</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">10</span><span class="cal-ast" style="--cal-fill: 66%">*</span></div>
+
+            <div class="cal-day has-progress"><span class="day-num">11</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">12</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">13</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">14</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
+            <div class="cal-day today"><span class="day-num">15</span><span class="cal-ast">*</span></div>
+            <div class="cal-day future"><span class="day-num">16</span><span class="cal-ast">*</span></div>
+            <div class="cal-day future"><span class="day-num">17</span><span class="cal-ast">*</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="other-goals">
+        <div class="og-label"><span>Other goals</span><span>3</span></div>
+        <div class="scroll-row">
+          <div class="goal-card featured clickable" data-nav="goal-detail">
+            <div class="gc-title">Spring<br>goal</div>
+            <div class="gc-meta">14 / 30 days</div>
+          </div>
+          <div class="goal-card clickable" data-nav="goal-detail">
+            <div class="gc-title">Read<br>a book</div>
+            <div class="gc-meta">Ongoing</div>
+          </div>
+          <div class="goal-card clickable" data-nav="goal-detail">
+            <div class="gc-title">Cold<br>shower</div>
+            <div class="gc-meta">7 / 14</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-bar">
+        <div class="cta clickable" data-nav="add-goal">+ Add a F<span class="red">*</span>cking new goal</div>
+      </div>
+    </div>
+
+    <!-- ============ GOAL DETAIL ============ -->
+    <div class="scrn" id="goal-detail">
+      <div class="topbar">
+        <span class="tb-back" data-nav="today">‹</span>
+        <span class="tb-label">Goal</span>
+        <span class="tb-action" id="gdMenuTrigger">···</span>
+        <div class="menu-popover" id="gdMenu">
+          <div class="menu-item">Edit</div>
+          <div class="menu-item">Archive</div>
+          <div class="menu-item danger">Delete</div>
+        </div>
+      </div>
+
+      <div class="hero-title">Spring routine</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">142</span><span class="lbl">Days active</span></div>
+        <div class="hero-stat"><span class="num">12<span class="ast-inline">*</span></span><span class="lbl">Day streak</span></div>
+        <div class="hero-stat"><span class="num">87%</span><span class="lbl">Completion</span></div>
+      </div>
+
+      <div class="gd-today-card">
+        <div class="gd-tc-top">
+          <div class="gd-tc-label">Today</div>
+          <div class="gd-tc-date">Fri 15 May</div>
+        </div>
+        <div class="gd-tc-body">
+          <div class="gd-tasks">
+            <div class="gd-task done" data-gd-task="g1">Read 10 pages</div>
+            <div class="gd-task done" data-gd-task="g2">100 push-ups</div>
+            <div class="gd-task" data-gd-task="g3">Call mom</div>
+          </div>
+          <div class="gd-ast-wrap">
+            <svg class="gd-ast-svg" id="gdAstSvg" viewBox="0 0 100 100">
+              <defs>
+                <clipPath id="gdClip">
+                  <rect x="45" y="3" width="10" height="94" rx="2" />
+                  <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)" />
+                  <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)" />
+                </clipPath>
+              </defs>
+              <g class="ast-outline">
+                <rect x="43" y="1" width="14" height="98" rx="2.5" />
+                <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)" />
+                <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)" />
+              </g>
+              <g class="ast-interior">
+                <rect x="45" y="3" width="10" height="94" rx="2" />
+                <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)" />
+                <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)" />
+              </g>
+              <g clip-path="url(#gdClip)">
+                <rect class="ast-fill-rect" id="gdAstFill" x="0" y="34" width="100" height="66" />
+              </g>
+            </svg>
+            <div class="gd-fraction" id="gdFraction">2/3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="sb-head"><span class="sb-title">Last 7 days</span><span class="sb-action">All-time ›</span></div>
+        <div class="bar-chart">
+          <div class="bc-body">
+            <div class="bc-y-axis">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+            </div>
+            <div class="bc-bars-wrap">
+              <div class="bc-grid l1"></div>
+              <div class="bc-grid l2"></div>
+              <div class="bc-grid l3"></div>
+              <div class="bc-grid base"></div>
+              <div class="bc-bars">
+                <div class="bc-bar" style="height: 100%"></div>
+                <div class="bc-bar" style="height: 66.6%"></div>
+                <div class="bc-bar" style="height: 100%"></div>
+                <div class="bc-bar" style="height: 33.3%"></div>
+                <div class="bc-bar" style="height: 33.3%"></div>
+                <div class="bc-bar" style="height: 100%"></div>
+                <div class="bc-bar" style="height: 66.6%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="bc-x-axis">
+            <span class="bc-x-label">Sat</span>
+            <span class="bc-x-label">Sun</span>
+            <span class="bc-x-label">Mon</span>
+            <span class="bc-x-label">Tue</span>
+            <span class="bc-x-label">Wed</span>
+            <span class="bc-x-label">Thu</span>
+            <span class="bc-x-label today">Fri</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="sb-head"><span class="sb-title">Sub-tasks</span><span class="sb-action">3 items</span></div>
+        <div class="subtasks-card">
+          <div class="st-row"><span class="st-name">Read 10 pages</span><span class="st-freq">Daily</span></div>
+          <div class="st-row"><span class="st-name">100 push-ups</span><span class="st-freq">Daily</span></div>
+          <div class="st-row"><span class="st-name">Call mom</span><span class="st-freq">Sundays</span></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="sb-head"><span class="sb-title">Notes</span><span class="sb-action">Edit ›</span></div>
+        <div class="notes-card">
+          <div class="notes-text">"Started after I quit going to the gym. Want to see if I can keep this up without anyone watching."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ADD GOAL ============ -->
+    <div class="scrn" id="add-goal">
+      <div class="ag-topbar">
+        <span class="ag-cancel" data-nav="today">Cancel</span>
+        <span class="ag-title">New Goal</span>
+        <span class="ag-save" id="agSave">Save</span>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Goal name</div>
+        <input class="goal-name-input" id="agName" type="text" placeholder="Spring routine" maxlength="40">
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Things to do</div>
+        <div class="task-list" id="agTaskList"></div>
+        <div class="add-row">
+          <input class="task-input" id="agInput" type="text" placeholder="Type or tap below" maxlength="60">
+          <button class="add-btn" id="agAddBtn">+ Add</button>
+        </div>
+        <div class="form-label" style="margin-top:14px;">Quick add</div>
+        <div class="chip-cloud" id="agChips">
+          <div class="chip">Call someone</div>
+          <div class="chip">100 push-ups</div>
+          <div class="chip">Read 10 pages</div>
+          <div class="chip">Cold shower</div>
+          <div class="chip">Drink 2L water</div>
+          <div class="chip">Meditate 5 min</div>
+          <div class="chip">30 min walk</div>
+          <div class="chip">No sugar</div>
+          <div class="chip">No phone after 9pm</div>
+          <div class="chip">Stretch 10 min</div>
+          <div class="chip">10k steps</div>
+          <div class="chip">Floss</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Repeat</div>
+        <div class="setting-row">
+          <span class="label-text">Every day</span>
+          <span><span class="value-text">Daily</span><span class="caret">›</span></span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Duration</div>
+        <div class="setting-row">
+          <span class="label-text">Ongoing</span>
+          <span><span class="value-text">No end</span><span class="caret">›</span></span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Starts</div>
+        <div class="setting-row">
+          <span class="label-text">Today</span>
+          <span><span class="value-text">Fri 15 May</span><span class="caret">›</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PROFILE ============ -->
+    <div class="scrn" id="profile">
+      <div class="topbar">
+        <span class="tb-back" data-nav="today">‹</span>
+        <span class="tb-label">Profile</span>
+        <span class="tb-action" data-nav="settings" style="font-size: 18px;">⚙</span>
+      </div>
+
+      <div class="profile-head">
+        <div class="avatar-big"></div>
+        <div>
+          <div class="p-name">Alex Çakır</div>
+          <div class="p-meta">@alex · since Jan '26</div>
+        </div>
+      </div>
+
+      <div class="stat-hero">
+        <div class="stat-hero-num">142</div>
+        <div class="stat-hero-lbl">Days active</div>
+      </div>
+
+      <div class="stat-pair">
+        <div class="stat-small"><div class="num">23</div><div class="lbl">Goals tracked</div></div>
+        <div class="stat-small"><div class="num red">87%</div><div class="lbl">Completion</div></div>
+      </div>
+
+      <div class="section-block">
+        <div class="sb-head"><span class="sb-title">Recent badges</span><span class="sb-action">4 of 12</span></div>
+        <div class="badges-row">
+          <div class="badge"><div class="badge-ast">*</div><div class="badge-num">1d</div></div>
+          <div class="badge"><div class="badge-ast">*</div><div class="badge-num">7d</div></div>
+          <div class="badge"><div class="badge-ast">*</div><div class="badge-num">30d</div></div>
+          <div class="badge"><div class="badge-ast">*</div><div class="badge-num">100d</div></div>
+          <div class="badge dim"><div class="badge-ast">*</div><div class="badge-num">365d</div></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="sb-head"><span class="sb-title">Look back</span></div>
+        <div class="nav-card">
+          <div class="nav-row clickable" data-nav="stats">
+            <span class="name">Detailed stats</span>
+            <span class="arrow">›</span>
+          </div>
+          <div class="nav-row clickable" data-nav="archive">
+            <span class="name">Goal archive</span>
+            <span class="arrow">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ STATS ============ -->
+    <div class="scrn" id="stats">
+      <div class="topbar">
+        <span class="tb-back" data-nav="profile">‹</span>
+        <span class="tb-label">Stats</span>
+        <span class="tb-action"></span>
+      </div>
+
+      <div class="period-toggle" id="ptToggle">
+        <div class="pt-item" data-period="week">Week</div>
+        <div class="pt-item" data-period="month">Month</div>
+        <div class="pt-item active" data-period="year">Year</div>
+      </div>
+
+      <div class="year-card">
+        <div class="month-labels">
+          <span class="ml">J</span><span class="ml">F</span><span class="ml">M</span><span class="ml">A</span><span class="ml">M</span><span class="ml">J</span><span class="ml">J</span><span class="ml">A</span><span class="ml">S</span><span class="ml">O</span><span class="ml">N</span><span class="ml">D</span>
+        </div>
+        <div class="year-grid" id="yearGrid"></div>
+        <div class="year-foot">
+          <span>2026</span>
+          <span id="periodSummary">142 of 365 days · 39%</span>
+        </div>
+      </div>
+
+      <div class="stat-list">
+        <div class="stat-list-row"><span class="name">Total completions</span><span class="v">2,847</span></div>
+        <div class="stat-list-row"><span class="name">Best streak</span><span class="v">37 <span style="color: var(--highlight);">*</span></span></div>
+        <div class="stat-list-row"><span class="name">Current streak</span><span class="v">12 <span style="color: var(--highlight);">*</span></span></div>
+        <div class="stat-list-row"><span class="name">Most consistent</span><span class="v" style="font-family: 'Inter', sans-serif; font-size: 12px;">Read 10 pages</span></div>
+        <div class="stat-list-row"><span class="name">Most skipped</span><span class="v" style="font-family: 'Inter', sans-serif; font-size: 12px;">Cold shower</span></div>
+      </div>
+    </div>
+
+    <!-- ============ ARCHIVE ============ -->
+    <div class="scrn" id="archive">
+      <div class="topbar">
+        <span class="tb-back" data-nav="profile">‹</span>
+        <span class="tb-label">Archive</span>
+        <span class="tb-action">↓</span>
+      </div>
+
+      <div class="archive-header">Old goals</div>
+      <div class="archive-sub">17 archived · 6 completed fully</div>
+
+      <div class="filter-row">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip">Completed</div>
+        <div class="filter-chip">Paused</div>
+        <div class="filter-chip">Partial</div>
+      </div>
+
+      <div class="arch-item clickable" data-nav="goal-detail">
+        <div class="arch-top">
+          <div class="arch-name">30-day push-up build</div>
+          <div class="arch-status complete">Complete</div>
+        </div>
+        <div class="arch-date">Mar 12 — Apr 11 · 2025</div>
+        <div class="arch-bottom">
+          <div class="arch-detail">All 30 days done</div>
+          <div class="arch-pct red">100%</div>
+        </div>
+      </div>
+
+      <div class="arch-item clickable" data-nav="goal-detail">
+        <div class="arch-top">
+          <div class="arch-name">No phone after 9pm</div>
+          <div class="arch-status partial">Partial</div>
+        </div>
+        <div class="arch-date">Feb 1 — Feb 28 · 2025</div>
+        <div class="arch-bottom">
+          <div class="arch-detail">19 of 28 days</div>
+          <div class="arch-pct">68%</div>
+        </div>
+      </div>
+
+      <div class="arch-item clickable" data-nav="goal-detail">
+        <div class="arch-top">
+          <div class="arch-name">Daily walk</div>
+          <div class="arch-status paused">Paused</div>
+        </div>
+        <div class="arch-date">Jan — ongoing · 2025</div>
+        <div class="arch-bottom">
+          <div class="arch-detail">Paused on day 45 of 60</div>
+          <div class="arch-pct">45<span style="font-size: 11px; opacity: 0.6;">d</span></div>
+        </div>
+      </div>
+
+      <div class="arch-item clickable" data-nav="goal-detail">
+        <div class="arch-top">
+          <div class="arch-name">Meditate 5 min</div>
+          <div class="arch-status partial">Partial</div>
+        </div>
+        <div class="arch-date">Dec 1 — Dec 31 · 2024</div>
+        <div class="arch-bottom">
+          <div class="arch-detail">8 of 31 days</div>
+          <div class="arch-pct">26%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div class="scrn" id="settings">
+      <div class="topbar">
+        <span class="tb-back" data-nav="profile">‹</span>
+        <span class="tb-label">Settings</span>
+        <span class="tb-action"></span>
+      </div>
+
+      <div class="sec-group">
+        <div class="sec-label">Account</div>
+        <div class="set-card">
+          <div class="set-row"><span class="set-name">Display name</span><div class="set-right"><span class="set-value">Alex</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row"><span class="set-name">Avatar</span><span class="set-arrow">›</span></div>
+          <div class="set-row"><span class="set-name">Username</span><div class="set-right"><span class="set-value">@alex</span><span class="set-arrow">›</span></div></div>
+        </div>
+      </div>
+
+      <div class="sec-group">
+        <div class="sec-label">App</div>
+        <div class="set-card">
+          <div class="set-row"><span class="set-name">Theme</span><div class="set-right"><span class="set-value">Light</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row"><span class="set-name">Streak modals</span><div class="ios-toggle on"></div></div>
+          <div class="set-row"><span class="set-name">Sounds</span><div class="ios-toggle"></div></div>
+          <div class="set-row"><span class="set-name">Haptics</span><div class="ios-toggle on"></div></div>
+        </div>
+      </div>
+
+      <div class="sec-group">
+        <div class="sec-label">Your Data</div>
+        <div class="set-card">
+          <div class="set-row"><span class="set-name">Export</span><span class="set-arrow">›</span></div>
+          <div class="set-row danger"><span class="set-name">Reset everything</span><span class="set-arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="sec-group">
+        <div class="sec-label">Coming in v2</div>
+        <div class="set-card">
+          <div class="set-row disabled"><span class="set-name">Notifications<span class="soon-badge">Soon</span></span><span class="set-arrow">›</span></div>
+          <div class="set-row disabled"><span class="set-name">Friends & challenges<span class="soon-badge">Soon</span></span><span class="set-arrow">›</span></div>
+          <div class="set-row disabled"><span class="set-name">Cloud sync<span class="soon-badge">Soon</span></span><span class="set-arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="about-link clickable" data-nav="about">About EFD ›</div>
+    </div>
+
+    <!-- ============ ABOUT ============ -->
+    <div class="scrn" id="about">
+      <div class="topbar">
+        <span class="tb-back" data-nav="settings">‹</span>
+        <span class="tb-label">About</span>
+        <span class="tb-action"></span>
+      </div>
+
+      <div class="about-word">Every<br>F<span class="red">*</span>cking<br>Day</div>
+      <div class="about-version">v0.1.0 · iOS · 2026</div>
+
+      <div class="about-credits">
+        <div class="credit-row"><span class="lbl">Made by</span><span class="val">Caner Ergür</span></div>
+        <div class="credit-row"><span class="lbl">Designed with</span><span class="val">Claude</span></div>
+        <div class="credit-row"><span class="lbl">From</span><span class="val">Istanbul</span></div>
+      </div>
+
+      <div class="about-tagline">A personal-tracking app for people who don't want to be tracked at.</div>
+
+      <div class="about-links">
+        <div class="ab-link-row"><span>Send feedback</span><span class="arrow">›</span></div>
+        <div class="ab-link-row"><span>Privacy</span><span class="arrow">›</span></div>
+        <div class="ab-link-row"><span>Terms</span><span class="arrow">›</span></div>
+        <div class="ab-link-row"><span>Open-source acknowledgments</span><span class="arrow">›</span></div>
+      </div>
+
+      <div class="about-quote">You don't have to do this,<br>you know?</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Tomorrow is also a day.</div>
+  </div>
+
+</div>
+
+<script>
+  // ============ NAVIGATION ============
+  const screens = document.querySelectorAll('.scrn');
+  const screenSelect = document.getElementById('screenSelect');
+  const currentName = document.getElementById('currentName');
+  const labels = {
+    splash: 'Splash', today: 'Today', 'goal-detail': 'Goal Detail',
+    'add-goal': 'Add Goal', profile: 'Profile', stats: 'Stats',
+    archive: 'Archive', settings: 'Settings', about: 'About'
+  };
+
+  function showScreen(id) {
+    screens.forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      target.scrollTop = 0;
+      currentName.textContent = labels[id] || id;
+      screenSelect.value = id;
+    }
+  }
+
+  // Wire up [data-nav] elements
+  document.addEventListener('click', (e) => {
+    const navEl = e.target.closest('[data-nav]');
+    if (navEl) {
+      e.stopPropagation();
+      showScreen(navEl.dataset.nav);
+    }
+  });
+
+  // Dropdown navigation
+  screenSelect.addEventListener('change', () => showScreen(screenSelect.value));
+
+  // Reset
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    showScreen('splash');
+    // Reset Today asterisk state
+    const t1 = document.querySelector('[data-task="t1"]');
+    const t2 = document.querySelector('[data-task="t2"]');
+    const t3 = document.querySelector('[data-task="t3"]');
+    if (t1) { t1.dataset.state = 'done'; t1.classList.add('done'); }
+    if (t2) { t2.dataset.state = 'done'; t2.classList.add('done'); }
+    if (t3) { t3.dataset.state = 'todo'; t3.classList.remove('done'); }
+    updateTodayAst();
+  });
+
+  // ============ TODAY: SUB-TASK TAP → ASTERISK ============
+  (function() {
+    const taskEls = document.querySelectorAll('#today .subgoal');
+    taskEls.forEach(t => {
+      if (!t.dataset.state) t.dataset.state = t.classList.contains('done') ? 'done' : 'todo';
+      t.addEventListener('click', (e) => {
+        e.stopPropagation();
+        t.dataset.state = t.dataset.state === 'done' ? 'todo' : 'done';
+        t.classList.toggle('done');
+        updateTodayAst();
+      });
+    });
+  })();
+
+  function updateTodayAst() {
+    const tasks = document.querySelectorAll('#today .subgoal');
+    const total = tasks.length;
+    const done = Array.from(tasks).filter(t => t.dataset.state === 'done').length;
+    const pct = done === total ? 100 : Math.floor((done/total)*100);
+    const isComplete = done === total;
+    const svg = document.getElementById('todayAstSvg');
+    const fill = document.getElementById('todayAstFill');
+    const frac = document.getElementById('todayAstFraction');
+    if (fill) { fill.setAttribute('y', 100 - pct); fill.setAttribute('height', pct); }
+    if (frac) { frac.textContent = done + '/' + total; frac.classList.toggle('complete', isComplete); }
+    if (svg) svg.classList.toggle('complete', isComplete);
+    if (isComplete) showToast('Tomorrow is also a day.');
+  }
+
+  // ============ GOAL DETAIL: SAME PATTERN ============
+  (function() {
+    const taskEls = document.querySelectorAll('#goal-detail .gd-task');
+    taskEls.forEach(t => {
+      if (!t.dataset.state) t.dataset.state = t.classList.contains('done') ? 'done' : 'todo';
+      t.addEventListener('click', (e) => {
+        e.stopPropagation();
+        t.dataset.state = t.dataset.state === 'done' ? 'todo' : 'done';
+        t.classList.toggle('done');
+        updateGdAst();
+      });
+    });
+    updateGdAst();
+  })();
+
+  function updateGdAst() {
+    const tasks = document.querySelectorAll('#goal-detail .gd-task');
+    const total = tasks.length;
+    const done = Array.from(tasks).filter(t => t.dataset.state === 'done').length;
+    const pct = done === total ? 100 : Math.floor((done/total)*100);
+    const isComplete = done === total;
+    const svg = document.getElementById('gdAstSvg');
+    const fill = document.getElementById('gdAstFill');
+    const frac = document.getElementById('gdFraction');
+    if (fill) { fill.setAttribute('y', 100 - pct); fill.setAttribute('height', pct); }
+    if (frac) { frac.textContent = done + '/' + total; frac.classList.toggle('complete', isComplete); }
+    if (svg) svg.classList.toggle('complete', isComplete);
+  }
+
+  // ============ GOAL DETAIL: ··· MENU ============
+  (function() {
+    const trigger = document.getElementById('gdMenuTrigger');
+    const popover = document.getElementById('gdMenu');
+    if (!trigger || !popover) return;
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popover.classList.toggle('open');
+    });
+    document.addEventListener('click', () => popover.classList.remove('open'));
+    popover.addEventListener('click', (e) => e.stopPropagation());
+  })();
+
+  // ============ TODAY: HAMBURGER POPUP ============
+  (function() {
+    const trigger = document.getElementById('todayMenuBtn');
+    const popup = document.getElementById('todayMenuPopup');
+    if (!trigger || !popup) return;
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popup.classList.toggle('open');
+    });
+    document.addEventListener('click', () => popup.classList.remove('open'));
+    popup.addEventListener('click', (e) => e.stopPropagation());
+    // Close popup when a nav item is clicked (after navigation triggers)
+    popup.querySelectorAll('[data-nav]').forEach(el => {
+      el.addEventListener('click', () => popup.classList.remove('open'));
+    });
+  })();
+
+  // (Goal Detail heatmap removed — replaced with static bar chart in HTML)
+
+  // ============ ADD GOAL ============
+  (function() {
+    const name = document.getElementById('agName');
+    const input = document.getElementById('agInput');
+    const addBtn = document.getElementById('agAddBtn');
+    const taskList = document.getElementById('agTaskList');
+    const chips = document.getElementById('agChips');
+    const save = document.getElementById('agSave');
+    let activeChip = null;
+
+    function updateAddBtn() { addBtn.classList.toggle('enabled', input.value.trim().length > 0); }
+    function updateSaveBtn() {
+      save.classList.toggle('enabled', name.value.trim().length > 0 && taskList.children.length > 0);
+    }
+    function updateChip(text, used) {
+      Array.from(chips.children).forEach(c => {
+        if (c.textContent.trim() === text) c.classList.toggle('used', used);
+      });
+    }
+
+    function addTask(text, origin) {
+      const item = document.createElement('div');
+      item.className = 'task-item';
+      item.innerHTML = `<span class="task-bullet">*</span><span class="task-text">${text}</span><span class="task-remove">×</span>`;
+      taskList.appendChild(item);
+      item.querySelector('.task-remove').addEventListener('click', () => {
+        if (origin) updateChip(origin, false);
+        item.remove();
+        updateSaveBtn();
+      });
+      if (origin) updateChip(origin, true);
+    }
+
+    chips.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        input.value = chip.textContent.trim();
+        activeChip = chip.textContent.trim();
+        input.focus();
+        updateAddBtn();
+      });
+    });
+
+    input.addEventListener('input', updateAddBtn);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        e.preventDefault();
+        addBtn.click();
+      }
+    });
+
+    addBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (!text) return;
+      addTask(text, activeChip);
+      input.value = '';
+      activeChip = null;
+      updateAddBtn();
+      updateSaveBtn();
+      input.focus();
+    });
+
+    name.addEventListener('input', updateSaveBtn);
+
+    save.addEventListener('click', () => {
+      if (!save.classList.contains('enabled')) return;
+      showToast('Goal saved.');
+      setTimeout(() => showScreen('today'), 600);
+      // Reset form
+      setTimeout(() => {
+        name.value = '';
+        taskList.innerHTML = '';
+        input.value = '';
+        Array.from(chips.children).forEach(c => c.classList.remove('used'));
+        updateAddBtn();
+        updateSaveBtn();
+      }, 800);
+    });
+  })();
+
+  // ============ STATS YEAR GRID ============
+  (function() {
+    const grid = document.getElementById('yearGrid');
+    if (!grid) return;
+    for (let m = 0; m < 12; m++) {
+      for (let d = 0; d < 26; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'yc';
+        const recent = m >= 3;
+        const r = Math.random();
+        if (recent) {
+          if (r < 0.55) cell.classList.add('l3');
+          else if (r < 0.75) cell.classList.add('l2');
+          else if (r < 0.85) cell.classList.add('l1');
+        } else {
+          if (r < 0.15) cell.classList.add('l3');
+          else if (r < 0.3) cell.classList.add('l2');
+          else if (r < 0.4) cell.classList.add('l1');
+        }
+        grid.appendChild(cell);
+      }
+    }
+  })();
+
+  // Stats period toggle
+  (function() {
+    const items = document.querySelectorAll('#stats .pt-item');
+    const summary = document.getElementById('periodSummary');
+    const sums = { week: '6 of 7 days · 86%', month: '24 of 30 days · 80%', year: '142 of 365 days · 39%' };
+    items.forEach(it => {
+      it.addEventListener('click', () => {
+        items.forEach(i => i.classList.remove('active'));
+        it.classList.add('active');
+        if (summary) summary.textContent = sums[it.dataset.period] || '';
+      });
+    });
+  })();
+
+  // Settings toggles
+  document.querySelectorAll('#settings .ios-toggle').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('on'));
+  });
+
+  // ============ TOAST ============
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+</script>
+</body>
+</html>
