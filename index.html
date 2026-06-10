@@ -707,7 +707,21 @@
   #about .credit-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
   #about .credit-row .lbl { color: var(--gray-text); font-weight: 500; }
   #about .credit-row .val { font-weight: 600; }
-  #about .about-tagline { font-size: 13px; color: var(--gray-text-strong); line-height: 1.5; margin-bottom: 20px; font-style: italic; }
+  #about .about-tagline { font-size: 13px; color: var(--gray-text-strong); line-height: 1.5; margin-bottom: 22px; font-style: italic; }
+
+  /* TIP JAR */
+  #about .tipjar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px; }
+  #about .tipjar-card { background: var(--card); border-radius: 14px; padding: 18px 16px 16px; box-shadow: var(--shadow-card); margin-bottom: 22px; }
+  #about .tipjar-headline { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; line-height: 1.2; color: var(--black); margin-bottom: 4px; }
+  #about .tipjar-sub { font-size: 12px; color: var(--gray-text-strong); line-height: 1.45; margin-bottom: 16px; }
+  #about .tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #about .tip-option { background: var(--gray-soft); border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.15s ease; border: 1.5px solid transparent; }
+  #about .tip-option:hover { background: var(--white); border-color: var(--highlight); transform: translateY(-1px); }
+  #about .tip-option:active { transform: scale(0.98); }
+  #about .tip-amount { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 26px; line-height: 1; color: var(--black); margin-bottom: 6px; }
+  #about .tip-asterisks { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 18px; color: var(--highlight); line-height: 0.6; letter-spacing: 0.05em; margin-bottom: 6px; }
+  #about .tip-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text-strong); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  #about .tipjar-footer { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text); text-align: center; margin-top: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
   #about .about-links { background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 20px; }
   #about .ab-link-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-line); font-size: 13px; font-weight: 500; cursor: pointer; }
   #about .ab-link-row:last-child { border-bottom: none; }
@@ -1299,6 +1313,38 @@
 
       <div class="about-tagline">A personal-tracking app for people who don't want to be tracked at.</div>
 
+      <!-- ============ TIP JAR ============ -->
+      <div class="tipjar-label">Tip jar</div>
+      <div class="tipjar-card">
+        <div class="tipjar-headline">Pick a number. Or don't.</div>
+        <div class="tipjar-sub">This app is free. Always will be. But if it helped, you can throw the maker a coffee.</div>
+
+        <div class="tip-grid">
+          <div class="tip-option" data-tip="0.99">
+            <div class="tip-amount">$0.99</div>
+            <div class="tip-asterisks">*</div>
+            <div class="tip-label">Coffee</div>
+          </div>
+          <div class="tip-option" data-tip="2.99">
+            <div class="tip-amount">$2.99</div>
+            <div class="tip-asterisks">**</div>
+            <div class="tip-label">Good coffee</div>
+          </div>
+          <div class="tip-option" data-tip="4.99">
+            <div class="tip-amount">$4.99</div>
+            <div class="tip-asterisks">***</div>
+            <div class="tip-label">+ a snack</div>
+          </div>
+          <div class="tip-option" data-tip="9.99">
+            <div class="tip-amount">$9.99</div>
+            <div class="tip-asterisks">****</div>
+            <div class="tip-label">Generous</div>
+          </div>
+        </div>
+
+        <div class="tipjar-footer">No pressure. No badges. Just thanks.</div>
+      </div>
+
       <div class="about-links">
         <div class="ab-link-row"><span>Send feedback</span><span class="arrow">›</span></div>
         <div class="ab-link-row"><span>Privacy</span><span class="arrow">›</span></div>
@@ -1431,6 +1477,17 @@
     });
     document.addEventListener('click', () => popover.classList.remove('open'));
     popover.addEventListener('click', (e) => e.stopPropagation());
+  })();
+
+  // ============ TIP JAR (About) ============
+  (function() {
+    const tipOptions = document.querySelectorAll('#about .tip-option');
+    tipOptions.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showToast('Noted. Same as a streak.');
+      });
+    });
   })();
 
   // ============ TODAY: HAMBURGER POPUP ============
