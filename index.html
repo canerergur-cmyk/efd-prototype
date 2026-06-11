@@ -330,34 +330,36 @@
   /* Mini calendar */
   #today .mini-cal { border-top: 1px solid var(--gray-line); padding-top: 16px; }
   #today .cal-month { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
-  #today .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px 4px; }
-  #today .cal-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-align: center; font-weight: 500; padding-bottom: 2px; }
+  #today .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px 3px; }
+  #today .cal-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-align: center; font-weight: 500; padding-bottom: 4px; }
   #today .cal-day {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 6px 0 10px;
-    min-height: 50px;
+    padding: 3px 0 5px;
+    min-height: 38px;
     position: relative;
   }
-  #today .cal-day .day-num { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; color: var(--gray-text-strong); }
+  #today .cal-day .day-num { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; color: var(--gray-text-strong); }
   #today .cal-day.future .day-num { color: var(--gray-mid); }
-  #today .cal-ast {
-    font-family: 'Big Shoulders Display', sans-serif;
-    font-weight: 900; font-size: 36px; line-height: 1;
-    background: linear-gradient(to top, var(--highlight) 0%, var(--highlight) var(--cal-fill, 0%), transparent var(--cal-fill, 0%));
-    -webkit-background-clip: text; background-clip: text;
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--black);
-    transform: translateY(4%);
+
+  /* SVG mini asterisk — final size (~20% smaller again per request) */
+  #today .cal-svg-ast {
+    width: 22px; height: 22px;
+    display: block;
   }
-  #today .cal-ast.complete { -webkit-text-stroke-color: var(--highlight); }
+  #today .cal-svg-ast .ast-outline rect { fill: var(--black); transition: fill 0.3s ease; }
+  #today .cal-svg-ast .ast-interior rect { fill: white; }
+  #today .cal-svg-ast .ast-fill-rect { fill: var(--highlight); }
+  #today .cal-svg-ast.complete .ast-outline rect { fill: var(--highlight); }
+
   #today .cal-day.has-progress .day-num { display: none; }
-  #today .cal-day:not(.has-progress) .cal-ast { display: none; }
+  #today .cal-day:not(.has-progress) .cal-svg-ast { display: none; }
   #today .cal-day.today .day-num {
     background: var(--gray-soft); color: var(--black); font-weight: 700;
-    width: 30px; height: 30px;
+    width: 22px; height: 22px;
     display: inline-flex; align-items: center; justify-content: center;
     border-radius: 50%;
+    font-size: 12px;
   }
 
   /* Other goals scroll */
@@ -642,15 +644,57 @@
   #stats .pt-item { flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 600; border-radius: 7px; color: var(--gray-text); cursor: pointer; transition: all 0.2s ease; }
   #stats .pt-item.active { background: white; color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 
-  #stats .year-card { background: var(--card); border-radius: 14px; padding: 14px 12px; box-shadow: var(--shadow-card); margin-bottom: 22px; }
-  #stats .month-labels { display: grid; grid-template-columns: repeat(12, 1fr); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--gray-text); text-transform: uppercase; }
-  #stats .ml { text-align: left; padding-left: 2px; }
-  #stats .year-grid { display: grid; grid-template-columns: repeat(26, 1fr); gap: 1.5px; margin-bottom: 10px; }
-  #stats .yc { aspect-ratio: 1; background: var(--gray-line); border-radius: 1px; }
-  #stats .yc.l1 { background: var(--highlight-1); }
-  #stats .yc.l2 { background: var(--highlight-2); }
-  #stats .yc.l3 { background: var(--highlight); }
-  #stats .year-foot { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--gray-text); text-transform: uppercase; }
+  /* Asterisk-based stats viz (replaces heatmap) */
+  #stats .stats-card { background: var(--card); border-radius: 14px; padding: 20px 16px 16px; box-shadow: var(--shadow-card); margin-bottom: 22px; }
+  #stats .stats-card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  #stats .stats-card-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  #stats .stats-card-summary { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text-strong); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Generic SVG asterisk for stats */
+  #stats .stats-ast {
+    display: block;
+  }
+  #stats .stats-ast .ast-outline rect { fill: var(--black); }
+  #stats .stats-ast .ast-interior rect { fill: white; }
+  #stats .stats-ast .ast-fill-rect { fill: var(--highlight); }
+  #stats .stats-ast.complete .ast-outline rect { fill: var(--highlight); }
+
+  /* Apple Health-style: fewer data points = bigger asterisks, more data = smaller */
+
+  /* WEEK view: 7 asterisks, MUST fit in card (card inner ~316px) */
+  #stats .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  #stats .week-day { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+  #stats .week-day .stats-ast { width: 30px; height: 30px; flex-shrink: 0; }
+  #stats .week-day .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.04em; }
+  #stats .week-day .pct { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text-strong); font-weight: 500; }
+  #stats .week-day.today .label { color: var(--black); font-weight: 700; }
+
+  /* MONTH view: ~31 small asterisks (~26px) in 7-col grid */
+  #stats .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px 3px; }
+  #stats .month-head { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text); text-align: center; font-weight: 500; padding-bottom: 4px; }
+  #stats .month-day { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 0; min-height: 34px; position: relative; }
+  #stats .month-day .stats-ast { width: 26px; height: 26px; }
+  #stats .month-day .empty-num { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; color: var(--gray-mid); }
+  #stats .month-day.today .empty-num {
+    background: var(--gray-soft); color: var(--black); font-weight: 700;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+  }
+  #stats .month-day.placeholder { visibility: hidden; }
+
+  /* YEAR view: 12 monthly asterisks (24px, -20% from 30px) */
+  #stats .year-grid-new { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px 6px; }
+  #stats .year-month { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  #stats .year-month .stats-ast { width: 24px; height: 24px; }
+  #stats .year-month .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.04em; }
+  #stats .year-month .pct { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text-strong); font-weight: 500; }
+  #stats .year-month.current .label { color: var(--black); font-weight: 700; }
+
+  /* View visibility toggle */
+  #stats .stats-card { display: none; }
+  #stats .stats-card.active { display: block; }
 
   #stats .stat-list { background: var(--card); border-radius: 14px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 14px; }
   #stats .stat-list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-line); font-size: 13px; }
@@ -877,21 +921,94 @@
           <div class="cal-grid">
             <div class="cal-head">M</div><div class="cal-head">T</div><div class="cal-head">W</div><div class="cal-head">T</div><div class="cal-head">F</div><div class="cal-head">S</div><div class="cal-head">S</div>
 
-            <div class="cal-day has-progress"><span class="day-num">4</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">5</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">6</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
-            <div class="cal-day"><span class="day-num">7</span><span class="cal-ast">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">8</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">9</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">10</span><span class="cal-ast" style="--cal-fill: 66%">*</span></div>
+            <!-- Reusable SVG asterisk template for mini calendar.
+                 Each cell renders an inline SVG; fill height controlled by inline 'y' and 'height' on the rect.
+                 .complete class on SVG = outline becomes red (100% fill). -->
+            <div class="cal-day has-progress"><span class="day-num">4</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc4"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc4)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">5</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc5"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc5)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">6</span>
+              <svg class="cal-svg-ast" viewBox="0 0 100 100">
+                <defs><clipPath id="cc6"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc6)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g>
+              </svg>
+            </div>
+            <div class="cal-day"><span class="day-num">7</span></div>
+            <div class="cal-day has-progress"><span class="day-num">8</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc8"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc8)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">9</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc9"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc9)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">10</span>
+              <svg class="cal-svg-ast" viewBox="0 0 100 100">
+                <defs><clipPath id="cc10"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc10)"><rect class="ast-fill-rect" x="0" y="34" width="100" height="66"/></g>
+              </svg>
+            </div>
 
-            <div class="cal-day has-progress"><span class="day-num">11</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">12</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">13</span><span class="cal-ast" style="--cal-fill: 33%">*</span></div>
-            <div class="cal-day has-progress"><span class="day-num">14</span><span class="cal-ast complete" style="--cal-fill: 100%">*</span></div>
-            <div class="cal-day today"><span class="day-num">15</span><span class="cal-ast">*</span></div>
-            <div class="cal-day future"><span class="day-num">16</span><span class="cal-ast">*</span></div>
-            <div class="cal-day future"><span class="day-num">17</span><span class="cal-ast">*</span></div>
+            <div class="cal-day has-progress"><span class="day-num">11</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc11"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc11)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">12</span>
+              <svg class="cal-svg-ast" viewBox="0 0 100 100">
+                <defs><clipPath id="cc12"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc12)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">13</span>
+              <svg class="cal-svg-ast" viewBox="0 0 100 100">
+                <defs><clipPath id="cc13"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc13)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g>
+              </svg>
+            </div>
+            <div class="cal-day has-progress"><span class="day-num">14</span>
+              <svg class="cal-svg-ast complete" viewBox="0 0 100 100">
+                <defs><clipPath id="cc14"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+                <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+                <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+                <g clip-path="url(#cc14)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+              </svg>
+            </div>
+            <div class="cal-day today"><span class="day-num">15</span></div>
+            <div class="cal-day future"><span class="day-num">16</span></div>
+            <div class="cal-day future"><span class="day-num">17</span></div>
           </div>
         </div>
       </div>
@@ -935,8 +1052,8 @@
       <div class="hero-title">Spring routine</div>
       <div class="hero-stats">
         <div class="hero-stat"><span class="num">142</span><span class="lbl">Days active</span></div>
-        <div class="hero-stat"><span class="num">12<span class="ast-inline">*</span></span><span class="lbl">Day streak</span></div>
-        <div class="hero-stat"><span class="num">87%</span><span class="lbl">Completion</span></div>
+        <div class="hero-stat"><span class="num">78%</span><span class="lbl">This month</span></div>
+        <div class="hero-stat"><span class="num">87%</span><span class="lbl">All-time</span></div>
       </div>
 
       <div class="gd-today-card">
@@ -1160,21 +1277,280 @@
         <div class="pt-item active" data-period="year">Year</div>
       </div>
 
-      <div class="year-card">
-        <div class="month-labels">
-          <span class="ml">J</span><span class="ml">F</span><span class="ml">M</span><span class="ml">A</span><span class="ml">M</span><span class="ml">J</span><span class="ml">J</span><span class="ml">A</span><span class="ml">S</span><span class="ml">O</span><span class="ml">N</span><span class="ml">D</span>
+      <!-- ============ WEEK VIEW ============ -->
+      <div class="stats-card active" id="statsViewWeek" style="display:none;">
+        <div class="stats-card-head">
+          <span class="stats-card-title">This week · 9–15 May</span>
+          <span class="stats-card-summary">Avg · 71%</span>
         </div>
-        <div class="year-grid" id="yearGrid"></div>
-        <div class="year-foot">
-          <span>2026</span>
-          <span id="periodSummary">142 of 365 days · 39%</span>
+        <div class="week-grid">
+          <div class="week-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100">
+              <defs><clipPath id="wd1"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd1)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+            </svg>
+            <span class="label">Sat</span>
+            <span class="pct">100%</span>
+          </div>
+          <div class="week-day">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="wd2"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd2)"><rect class="ast-fill-rect" x="0" y="34" width="100" height="66"/></g>
+            </svg>
+            <span class="label">Sun</span>
+            <span class="pct">66%</span>
+          </div>
+          <div class="week-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100">
+              <defs><clipPath id="wd3"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd3)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+            </svg>
+            <span class="label">Mon</span>
+            <span class="pct">100%</span>
+          </div>
+          <div class="week-day">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="wd4"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd4)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g>
+            </svg>
+            <span class="label">Tue</span>
+            <span class="pct">33%</span>
+          </div>
+          <div class="week-day">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="wd5"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd5)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g>
+            </svg>
+            <span class="label">Wed</span>
+            <span class="pct">33%</span>
+          </div>
+          <div class="week-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100">
+              <defs><clipPath id="wd6"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd6)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+            </svg>
+            <span class="label">Thu</span>
+            <span class="pct">100%</span>
+          </div>
+          <div class="week-day today">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="wd7"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#wd7)"><rect class="ast-fill-rect" x="0" y="34" width="100" height="66"/></g>
+            </svg>
+            <span class="label">Fri</span>
+            <span class="pct">66%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ MONTH VIEW ============ -->
+      <div class="stats-card" id="statsViewMonth" style="display:none;">
+        <div class="stats-card-head">
+          <span class="stats-card-title">May 2026</span>
+          <span class="stats-card-summary">Month avg · 78%</span>
+        </div>
+        <div class="month-grid">
+          <div class="month-head">M</div><div class="month-head">T</div><div class="month-head">W</div><div class="month-head">T</div><div class="month-head">F</div><div class="month-head">S</div><div class="month-head">S</div>
+          <!-- Week 1: May 1-3 starts Friday -->
+          <div class="month-day placeholder"></div>
+          <div class="month-day placeholder"></div>
+          <div class="month-day placeholder"></div>
+          <div class="month-day placeholder"></div>
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md01"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md01)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast" viewBox="0 0 100 100"><defs><clipPath id="md02"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md02)"><rect class="ast-fill-rect" x="0" y="34" width="100" height="66"/></g></svg>
+          </div>
+          <div class="month-day"><span class="empty-num">3</span></div>
+          <!-- Week 2 -->
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md04"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md04)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md05"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md05)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast" viewBox="0 0 100 100"><defs><clipPath id="md06"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md06)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g></svg>
+          </div>
+          <div class="month-day"><span class="empty-num">7</span></div>
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md08"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md08)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md09"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md09)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast" viewBox="0 0 100 100"><defs><clipPath id="md10"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md10)"><rect class="ast-fill-rect" x="0" y="34" width="100" height="66"/></g></svg>
+          </div>
+          <!-- Week 3 -->
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md11"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md11)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast" viewBox="0 0 100 100"><defs><clipPath id="md12"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md12)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast" viewBox="0 0 100 100"><defs><clipPath id="md13"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md13)"><rect class="ast-fill-rect" x="0" y="67" width="100" height="33"/></g></svg>
+          </div>
+          <div class="month-day">
+            <svg class="stats-ast complete" viewBox="0 0 100 100"><defs><clipPath id="md14"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs><g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g><g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g><g clip-path="url(#md14)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g></svg>
+          </div>
+          <div class="month-day today"><span class="empty-num">15</span></div>
+          <div class="month-day"><span class="empty-num">16</span></div>
+          <div class="month-day"><span class="empty-num">17</span></div>
+          <!-- Week 4 + 5 (future days) -->
+          <div class="month-day"><span class="empty-num">18</span></div>
+          <div class="month-day"><span class="empty-num">19</span></div>
+          <div class="month-day"><span class="empty-num">20</span></div>
+          <div class="month-day"><span class="empty-num">21</span></div>
+          <div class="month-day"><span class="empty-num">22</span></div>
+          <div class="month-day"><span class="empty-num">23</span></div>
+          <div class="month-day"><span class="empty-num">24</span></div>
+          <div class="month-day"><span class="empty-num">25</span></div>
+          <div class="month-day"><span class="empty-num">26</span></div>
+          <div class="month-day"><span class="empty-num">27</span></div>
+          <div class="month-day"><span class="empty-num">28</span></div>
+          <div class="month-day"><span class="empty-num">29</span></div>
+          <div class="month-day"><span class="empty-num">30</span></div>
+          <div class="month-day"><span class="empty-num">31</span></div>
+        </div>
+      </div>
+
+      <!-- ============ YEAR VIEW (default) ============ -->
+      <div class="stats-card active" id="statsViewYear">
+        <div class="stats-card-head">
+          <span class="stats-card-title">2026 · By month</span>
+          <span class="stats-card-summary">Year avg · 62%</span>
+        </div>
+        <div class="year-grid-new">
+          <!-- 12 monthly asterisks -->
+          <div class="year-month">
+            <svg class="stats-ast complete" viewBox="0 0 100 100">
+              <defs><clipPath id="ym1"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#ym1)"><rect class="ast-fill-rect" x="0" y="0" width="100" height="100"/></g>
+            </svg>
+            <span class="label">Jan</span>
+            <span class="pct">91%</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="ym2"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#ym2)"><rect class="ast-fill-rect" x="0" y="22" width="100" height="78"/></g>
+            </svg>
+            <span class="label">Feb</span>
+            <span class="pct">78%</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="ym3"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#ym3)"><rect class="ast-fill-rect" x="0" y="40" width="100" height="60"/></g>
+            </svg>
+            <span class="label">Mar</span>
+            <span class="pct">60%</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast complete" viewBox="0 0 100 100">
+              <defs><clipPath id="ym4"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#ym4)"><rect class="ast-fill-rect" x="0" y="5" width="100" height="95"/></g>
+            </svg>
+            <span class="label">Apr</span>
+            <span class="pct">95%</span>
+          </div>
+          <div class="year-month current">
+            <svg class="stats-ast" viewBox="0 0 100 100">
+              <defs><clipPath id="ym5"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></clipPath></defs>
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+              <g clip-path="url(#ym5)"><rect class="ast-fill-rect" x="0" y="22" width="100" height="78"/></g>
+            </svg>
+            <span class="label">May</span>
+            <span class="pct">78%</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Jun</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Jul</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Aug</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Sep</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Oct</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Nov</span>
+            <span class="pct">—</span>
+          </div>
+          <div class="year-month">
+            <svg class="stats-ast" viewBox="0 0 100 100" style="opacity: 0.35;">
+              <g class="ast-outline"><rect x="43" y="1" width="14" height="98" rx="2.5"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/><rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/></g>
+              <g class="ast-interior"><rect x="45" y="3" width="10" height="94" rx="2"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/><rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/></g>
+            </svg>
+            <span class="label">Dec</span>
+            <span class="pct">—</span>
+          </div>
         </div>
       </div>
 
       <div class="stat-list">
-        <div class="stat-list-row"><span class="name">Total completions</span><span class="v">2,847</span></div>
-        <div class="stat-list-row"><span class="name">Best streak</span><span class="v">37 <span style="color: var(--highlight);">*</span></span></div>
-        <div class="stat-list-row"><span class="name">Current streak</span><span class="v">12 <span style="color: var(--highlight);">*</span></span></div>
+        <div class="stat-list-row"><span class="name">Total completions</span><span class="v">2,847 <span style="color: var(--highlight);">*</span></span></div>
+        <div class="stat-list-row"><span class="name">Best run ever</span><span class="v">37 days</span></div>
         <div class="stat-list-row"><span class="name">Most consistent</span><span class="v" style="font-family: 'Inter', sans-serif; font-size: 12px;">Read 10 pages</span></div>
         <div class="stat-list-row"><span class="name">Most skipped</span><span class="v" style="font-family: 'Inter', sans-serif; font-size: 12px;">Cold shower</span></div>
       </div>
@@ -1312,6 +1688,7 @@
       </div>
 
       <div class="about-tagline">A personal-tracking app for people who don't want to be tracked at.</div>
+      <div style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 22px; line-height: 1; text-transform: uppercase; letter-spacing: -0.005em; color: var(--black); margin-bottom: 22px;">Fool everyone.<br>Just not<span style="color: var(--highlight);">*</span> yourself.</div>
 
       <!-- ============ TIP JAR ============ -->
       <div class="tipjar-label">Tip jar</div>
@@ -1588,40 +1965,29 @@
     });
   })();
 
-  // ============ STATS YEAR GRID ============
-  (function() {
-    const grid = document.getElementById('yearGrid');
-    if (!grid) return;
-    for (let m = 0; m < 12; m++) {
-      for (let d = 0; d < 26; d++) {
-        const cell = document.createElement('div');
-        cell.className = 'yc';
-        const recent = m >= 3;
-        const r = Math.random();
-        if (recent) {
-          if (r < 0.55) cell.classList.add('l3');
-          else if (r < 0.75) cell.classList.add('l2');
-          else if (r < 0.85) cell.classList.add('l1');
-        } else {
-          if (r < 0.15) cell.classList.add('l3');
-          else if (r < 0.3) cell.classList.add('l2');
-          else if (r < 0.4) cell.classList.add('l1');
-        }
-        grid.appendChild(cell);
-      }
-    }
-  })();
-
-  // Stats period toggle
+  // Stats period toggle — actually switches between Week / Month / Year views
   (function() {
     const items = document.querySelectorAll('#stats .pt-item');
-    const summary = document.getElementById('periodSummary');
-    const sums = { week: '6 of 7 days · 86%', month: '24 of 30 days · 80%', year: '142 of 365 days · 39%' };
+    const views = {
+      week: document.getElementById('statsViewWeek'),
+      month: document.getElementById('statsViewMonth'),
+      year: document.getElementById('statsViewYear')
+    };
     items.forEach(it => {
       it.addEventListener('click', () => {
         items.forEach(i => i.classList.remove('active'));
         it.classList.add('active');
-        if (summary) summary.textContent = sums[it.dataset.period] || '';
+        const period = it.dataset.period;
+        Object.entries(views).forEach(([key, el]) => {
+          if (!el) return;
+          if (key === period) {
+            el.style.display = 'block';
+            el.classList.add('active');
+          } else {
+            el.style.display = 'none';
+            el.classList.remove('active');
+          }
+        });
       });
     });
   })();
