@@ -197,7 +197,12 @@
     padding: 4px 4px 14px;
   }
   #today .pic { display: flex; align-items: center; gap: 10px; }
-  #today .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--black); }
+  #today .avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900; font-size: 16px; line-height: 1;
+  }
   #today .greeting { font-size: 15px; font-weight: 600; }
   #today .menu-link { font-size: 13px; color: var(--gray-text-strong); font-weight: 500; }
 
@@ -422,10 +427,10 @@
 
   /* ============ GOAL DETAIL ============ */
   #goal-detail .hero-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.05; letter-spacing: -0.015em; margin-bottom: 8px; }
-  #goal-detail .hero-stats { display: flex; gap: 14px; margin-bottom: 22px; }
-  #goal-detail .hero-stat { display: flex; flex-direction: column; gap: 1px; }
-  #goal-detail .hero-stat .num { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 22px; line-height: 1; }
-  #goal-detail .hero-stat .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-text); font-weight: 500; }
+  #goal-detail .hero-stats { display: flex; gap: 18px; margin-bottom: 26px; }
+  #goal-detail .hero-stat { display: flex; flex-direction: column; gap: 2px; }
+  #goal-detail .hero-stat .num { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 29px; line-height: 1; }
+  #goal-detail .hero-stat .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-text); font-weight: 500; }
   #goal-detail .ast-inline { color: var(--highlight); margin-left: 2px; }
 
   /* Today card inside Goal Detail */
@@ -568,45 +573,50 @@
   #goal-detail .menu-item.danger { color: var(--highlight); font-weight: 700; }
 
   /* ============ ADD GOAL ============ */
-  #add-goal .ag-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--gray-line); margin-bottom: 18px; }
-  #add-goal .ag-cancel { font-size: 13px; color: var(--gray-text-strong); font-weight: 500; cursor: pointer; }
-  #add-goal .ag-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
-  #add-goal .ag-save { font-size: 13px; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; pointer-events: none; }
-  #add-goal .ag-save.enabled { color: var(--highlight); pointer-events: auto; }
+  #add-goal .ag-topbar ,  #edit-goal .ag-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--gray-line); margin-bottom: 18px; }
+  #add-goal .ag-cancel ,  #edit-goal .ag-cancel { font-size: 13px; color: var(--gray-text-strong); font-weight: 500; cursor: pointer; }
+  #add-goal .ag-title ,  #edit-goal .ag-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  #add-goal .ag-save ,  #edit-goal .ag-save { font-size: 13px; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; pointer-events: none; }
+  #add-goal .ag-save.enabled ,  #edit-goal .ag-save.enabled { color: var(--highlight); pointer-events: auto; }
 
-  #add-goal .form-section { margin-bottom: 22px; }
-  #add-goal .form-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px; }
+  #add-goal .form-section ,  #edit-goal .form-section { margin-bottom: 22px; }
+  #add-goal .form-label ,  #edit-goal .form-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px; }
 
-  #add-goal .goal-name-input { width: 100%; background: transparent; border: none; outline: none; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.05; text-transform: uppercase; color: var(--black); letter-spacing: -0.01em; padding: 4px 0; border-bottom: 1.5px solid var(--gray-line); }
-  #add-goal .goal-name-input::placeholder { color: var(--gray-mid); font-weight: 800; }
-  #add-goal .goal-name-input:focus { border-bottom-color: var(--black); }
+  #add-goal .goal-name-input ,  #edit-goal .goal-name-input { width: 100%; background: transparent; border: none; outline: none; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.05; text-transform: uppercase; color: var(--black); letter-spacing: -0.01em; padding: 4px 0; border-bottom: 1.5px solid var(--gray-line); }
+  #add-goal .goal-name-input::placeholder ,  #edit-goal .goal-name-input::placeholder { color: var(--gray-mid); font-weight: 800; }
+  #add-goal .goal-name-input:focus ,  #edit-goal .goal-name-input:focus { border-bottom-color: var(--black); }
 
-  #add-goal .task-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-  #add-goal .task-list:empty { margin-bottom: 0; }
-  #add-goal .task-item { background: var(--card); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-card); }
-  #add-goal .task-bullet { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 18px; line-height: 0.55; color: var(--highlight); -webkit-text-stroke: 1.5px var(--black); width: 14px; text-align: center; }
-  #add-goal .task-text { flex: 1; font-size: 14px; font-weight: 500; }
-  #add-goal .task-remove { font-size: 11px; color: var(--gray-text); cursor: pointer; padding: 4px; }
+  #add-goal .task-list ,  #edit-goal .task-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  #add-goal .task-list:empty ,  #edit-goal .task-list:empty { margin-bottom: 0; }
+  #add-goal .task-item ,  #edit-goal .task-item { background: var(--card); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-card); }
+  #add-goal .task-bullet ,  #edit-goal .task-bullet { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 18px; line-height: 0.55; color: var(--highlight); -webkit-text-stroke: 1.5px var(--black); width: 14px; text-align: center; }
+  #add-goal .task-text ,  #edit-goal .task-text { flex: 1; font-size: 14px; font-weight: 500; }
+  #add-goal .task-remove ,  #edit-goal .task-remove { font-size: 11px; color: var(--gray-text); cursor: pointer; padding: 4px; }
 
-  #add-goal .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  #add-goal .task-input { flex: 1; background: var(--card); border: 1.5px solid var(--gray-line); border-radius: 10px; padding: 11px 14px; font-size: 14px; font-weight: 500; outline: none; transition: border-color 0.2s ease; }
-  #add-goal .task-input:focus { border-color: var(--black); background: white; }
-  #add-goal .add-btn { background: var(--gray-soft); color: var(--gray-mid); border: none; border-radius: 10px; padding: 0 16px; font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-  #add-goal .add-btn.enabled { background: var(--black); color: white; }
+  #add-goal .add-row ,  #edit-goal .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  #add-goal .task-input ,  #edit-goal .task-input { flex: 1; background: var(--card); border: 1.5px solid var(--gray-line); border-radius: 10px; padding: 11px 14px; font-size: 14px; font-weight: 500; outline: none; transition: border-color 0.2s ease; }
+  #add-goal .task-input:focus ,  #edit-goal .task-input:focus { border-color: var(--black); background: white; }
+  #add-goal .add-btn ,  #edit-goal .add-btn { background: var(--gray-soft); color: var(--gray-mid); border: none; border-radius: 10px; padding: 0 16px; font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+  #add-goal .add-btn.enabled ,  #edit-goal .add-btn.enabled { background: var(--black); color: white; }
 
-  #add-goal .chip-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-  #add-goal .chip { background: var(--gray-soft); border: 1px solid transparent; border-radius: 16px; padding: 6px 12px; font-size: 12px; font-weight: 500; color: var(--gray-text-strong); cursor: pointer; transition: all 0.2s ease; }
-  #add-goal .chip:hover { background: var(--gray-line); color: var(--black); }
-  #add-goal .chip.used { background: white; color: var(--highlight); border-color: var(--highlight); }
+  #add-goal .chip-cloud ,  #edit-goal .chip-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  #add-goal .chip ,  #edit-goal .chip { background: var(--gray-soft); border: 1px solid transparent; border-radius: 16px; padding: 6px 12px; font-size: 12px; font-weight: 500; color: var(--gray-text-strong); cursor: pointer; transition: all 0.2s ease; }
+  #add-goal .chip:hover ,  #edit-goal .chip:hover { background: var(--gray-line); color: var(--black); }
+  #add-goal .chip.used ,  #edit-goal .chip.used { background: white; color: var(--highlight); border-color: var(--highlight); }
 
-  #add-goal .setting-row { display: flex; justify-content: space-between; align-items: center; background: var(--card); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-card); cursor: pointer; }
-  #add-goal .label-text { font-weight: 600; font-size: 14px; }
-  #add-goal .value-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-text-strong); text-transform: uppercase; }
-  #add-goal .caret { color: var(--gray-mid); font-size: 16px; margin-left: 8px; }
+  #add-goal .setting-row ,  #edit-goal .setting-row { display: flex; justify-content: space-between; align-items: center; background: var(--card); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-card); cursor: pointer; }
+  #add-goal .label-text ,  #edit-goal .label-text { font-weight: 600; font-size: 14px; }
+  #add-goal .value-text ,  #edit-goal .value-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-text-strong); text-transform: uppercase; }
+  #add-goal .caret ,  #edit-goal .caret { color: var(--gray-mid); font-size: 16px; margin-left: 8px; }
 
   /* ============ PROFILE ============ */
   #profile .profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
-  #profile .avatar-big { width: 56px; height: 56px; border-radius: 50%; background: var(--black); }
+  #profile .avatar-big {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900; font-size: 24px; line-height: 1;
+  }
   #profile .p-name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; }
   #profile .p-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-text); font-weight: 500; margin-top: 4px; }
 
@@ -792,6 +802,544 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* ============ BOTTOM SHEET (shared infrastructure) ============ */
+  .bottom-sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 50;
+  }
+  .bottom-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .bottom-sheet {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: white;
+    border-radius: 22px 22px 0 0;
+    padding: 8px 16px 30px;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+    max-height: 78%;
+    overflow-y: auto;
+    transform: translateY(110%);
+    transition: transform 0.3s ease;
+    z-index: 60;
+    color: var(--black);
+  }
+  .bottom-sheet.open { transform: translateY(0); }
+
+  .sheet-handle {
+    width: 38px; height: 4px;
+    background: var(--gray-mid);
+    border-radius: 2px;
+    margin: 4px auto 14px;
+  }
+  .sheet-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+  .sheet-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .sheet-done {
+    font-size: 13px;
+    color: var(--highlight);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .sheet-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--gray-line);
+    cursor: pointer;
+    user-select: none;
+  }
+  .sheet-row:last-child { border-bottom: none; }
+  .sheet-row:hover { background: var(--gray-soft); border-radius: 6px; }
+  .sheet-row .sr-label { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--black); }
+  .sheet-row .sr-sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--gray-text); margin-top: 2px; letter-spacing: 0.02em; }
+  .sheet-row .sr-marker {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 0.55;
+    color: var(--highlight);
+    -webkit-text-stroke: 1.5px var(--black);
+    width: 18px;
+    text-align: center;
+    visibility: hidden;
+  }
+  .sheet-row.selected .sr-marker { visibility: visible; }
+
+  /* Custom repeat sub-sheet panel */
+  .custom-repeat-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .custom-repeat-panel.open { max-height: 320px; }
+  .crp-inner { padding: 12px 4px 4px; }
+  .crp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .crp-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .crp-input {
+    background: var(--card);
+    border: 1.5px solid var(--gray-line);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--black);
+    outline: none;
+    width: 56px;
+    text-align: center;
+  }
+  .crp-segment {
+    display: flex;
+    background: var(--gray-soft);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .crp-seg {
+    flex: 1;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--gray-text);
+  }
+  .crp-seg.on {
+    background: white;
+    color: var(--black);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* Custom Duration date range */
+  .cd-range {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .cd-range.open { max-height: 220px; }
+  .cd-range-inner { padding: 14px 4px 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cd-field {
+    background: var(--card);
+    border: 1.5px solid var(--gray-line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  .cd-field .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-text);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .cd-field .val {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  /* Specific days sub-options panel (Repeat sheet) */
+  .sub-options {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .sub-options.open { max-height: 120px; }
+  .day-toggles {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    padding: 14px 4px 8px;
+  }
+  .day-pill {
+    background: var(--gray-soft);
+    border-radius: 50%;
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gray-text-strong);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .day-pill.on { background: var(--highlight); color: white; }
+
+  /* Date picker calendar (Starts sheet) */
+  .dp-calendar { padding: 16px 0 8px; }
+  .dp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .dp-month { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .dp-nav { display: flex; gap: 14px; }
+  .dp-nav span { font-size: 16px; color: var(--gray-text-strong); cursor: pointer; padding: 2px 6px; }
+  .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+  .dp-wd { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-text); font-weight: 500; padding: 4px 0; letter-spacing: 0.04em; }
+  .dp-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--black);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .dp-day:hover { background: var(--gray-soft); }
+  .dp-day.empty { visibility: hidden; }
+  .dp-day.muted { color: var(--gray-mid); }
+  .dp-day.today { background: var(--gray-soft); font-weight: 700; }
+  .dp-day.selected { background: var(--highlight); color: white; font-weight: 700; }
+
+  /* ============ MODAL (shared infrastructure) ============ */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 80;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 18px 16px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    transform: scale(0.95);
+    transition: transform 0.25s ease;
+    color: var(--black);
+  }
+  .modal-overlay.open .modal-card { transform: scale(1); }
+  .modal-ast {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 34px;
+    color: var(--highlight);
+    line-height: 0.55;
+    margin-bottom: 14px;
+    -webkit-text-stroke: 2px var(--black);
+  }
+  .modal-ast.complete { color: var(--highlight); -webkit-text-stroke-color: var(--highlight); }
+  .modal-title { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .modal-text { font-size: 12px; color: var(--gray-text-strong); line-height: 1.45; margin-bottom: 16px; }
+  .modal-buttons { display: flex; gap: 8px; }
+  .modal-btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .modal-btn-cancel { background: var(--gray-soft); color: var(--black); }
+  .modal-btn-danger { background: var(--highlight); color: white; font-weight: 700; }
+  .modal-btn-confirm { background: var(--black); color: white; font-weight: 700; }
+
+  /* ============ SIGN IN ============ */
+  #signin {
+    background: white;
+    padding: 80px 28px 40px;
+    align-items: center;
+  }
+  #signin .signin-ast {
+    width: 86px; height: 86px;
+    margin: 8px 0 40px;
+  }
+  #signin .signin-ast .ast-outline rect { fill: var(--black); }
+  #signin .signin-ast .ast-interior rect { fill: white; }
+  #signin .signin-headline {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-align: left;
+    margin-bottom: 10px;
+    align-self: stretch;
+  }
+  #signin .signin-headline .red { color: var(--highlight); }
+  #signin .signin-sub {
+    font-size: 13px;
+    color: var(--gray-text-strong);
+    line-height: 1.5;
+    margin-bottom: 36px;
+    align-self: stretch;
+  }
+  #signin .apple-btn {
+    background: var(--black);
+    color: white;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  #signin .apple-glyph {
+    font-size: 17px;
+    line-height: 1;
+    display: inline-block;
+    transform: translateY(-1px);
+  }
+  #signin .signin-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 14px;
+    color: var(--gray-text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  #signin .signin-divider::before,
+  #signin .signin-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-line);
+  }
+  #signin .guest-btn {
+    background: transparent;
+    color: var(--black);
+    width: 100%;
+    padding: 13px;
+    border: 1.5px solid var(--gray-line);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  #signin .signin-footer {
+    margin-top: auto;
+    font-size: 11px;
+    color: var(--gray-text);
+    font-style: italic;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 240px;
+  }
+
+  /* ============ TODAY EMPTY STATE ============ */
+  #today-empty {
+    padding: 60px 16px 24px;
+    color: var(--black);
+    flex-direction: column;
+  }
+  #today-empty .te-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px 16px;
+  }
+  #today-empty .te-greet {
+    display: flex; align-items: center; gap: 10px;
+  }
+  #today-empty .te-greet .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--black);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 1;
+  }
+  #today-empty .te-greet .name { font-size: 15px; font-weight: 600; }
+
+  #today-empty .te-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px 16px;
+  }
+  #today-empty .te-ast-wrap {
+    width: 140px; height: 140px;
+    margin-bottom: 24px;
+  }
+  #today-empty .te-ast {
+    width: 140px; height: 140px;
+    display: block;
+  }
+  #today-empty .te-ast .ast-outline rect { fill: var(--black); }
+  #today-empty .te-ast .ast-interior rect { fill: white; }
+  #today-empty .te-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 36px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  #today-empty .te-title .red { color: var(--highlight); }
+  #today-empty .te-sub {
+    font-size: 14px;
+    color: var(--gray-text-strong);
+    line-height: 1.55;
+    max-width: 240px;
+    margin-bottom: 28px;
+  }
+  #today-empty .te-cta {
+    background: var(--black);
+    color: white;
+    padding: 16px 22px;
+    border-radius: 14px;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    width: 100%;
+    text-align: center;
+  }
+  #today-empty .te-cta .red-ast { color: var(--highlight); }
+  #today-empty .te-skip {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--gray-text);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ============ EDIT GOAL (reuses #add-goal styles, plus delete link) ============ */
+  #edit-goal .delete-link {
+    text-align: center;
+    color: var(--highlight);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 14px;
+    margin: 16px 0 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ============ PROFILE PHOTO CHANGE ============ */
+  #profile-photo {
+    padding: 64px 16px 24px;
+    color: var(--black);
+  }
+  #profile-photo .photo-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 32px;
+  }
+  #profile-photo .photo-big {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    color: white;
+    font-size: 56px;
+    line-height: 1;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  #profile-photo .photo-name {
+    font-size: 13px;
+    color: var(--gray-text-strong);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  #profile-photo .photo-options {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  #profile-photo .photo-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-line);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #profile-photo .photo-option:last-child { border-bottom: none; }
+  #profile-photo .photo-option:hover { background: var(--gray-soft); }
+  #profile-photo .photo-option.danger { color: var(--highlight); }
+  #profile-photo .photo-option .arrow {
+    color: var(--gray-mid);
+    font-size: 16px;
+  }
+  #profile-photo .ph-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin: 22px 0 8px;
+  }
+
   /* hint card */
   .hint {
     background: rgba(255,255,255,0.05);
@@ -824,10 +1372,14 @@
     <span class="proto-divider"></span>
     <select class="proto-select" id="screenSelect">
       <option value="splash">Splash</option>
+      <option value="signin">Sign In</option>
+      <option value="today-empty">Today · Empty</option>
       <option value="today">Today</option>
       <option value="goal-detail">Goal Detail</option>
       <option value="add-goal">Add Goal</option>
+      <option value="edit-goal">Edit Goal</option>
       <option value="profile">Profile</option>
+      <option value="profile-photo">Change Avatar</option>
       <option value="stats">Detailed Stats</option>
       <option value="archive">Archive</option>
       <option value="settings">Settings</option>
@@ -843,6 +1395,32 @@
     <div class="phone-notch"></div>
     <div class="phone-status"><span>9:41</span><span>•••</span></div>
 
+    <!-- ============ SIGN IN ============ -->
+    <div class="scrn" id="signin">
+      <svg class="signin-ast" viewBox="0 0 100 100">
+        <g class="ast-outline">
+          <rect x="43" y="1" width="14" height="98" rx="2.5"/>
+          <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/>
+          <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/>
+        </g>
+        <g class="ast-interior">
+          <rect x="45" y="3" width="10" height="94" rx="2"/>
+          <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/>
+          <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/>
+        </g>
+      </svg>
+
+      <div class="signin-headline">Welcome<br>back. Or not<span class="red">*</span></div>
+      <div class="signin-sub">Sign in if you want to sync across devices. Or just keep going without an account — your data stays on your phone either way.</div>
+
+      <button class="apple-btn" data-modal="apple-signin-modal">
+        <span class="apple-glyph"></span>
+        <span>Sign in with Apple</span>
+      </button>
+
+      <div class="signin-footer" style="margin-top: 24px;">You don't have to do this, you know?</div>
+    </div>
+
     <!-- ============ SPLASH ============ -->
     <div class="scrn active" id="splash" data-nav="today">
       <div class="word">Every<br>F<span class="ast">*</span>cking<br>Day</div>
@@ -853,7 +1431,7 @@
     <div class="scrn" id="today">
       <div class="greet-row">
         <div class="pic clickable" data-nav="profile">
-          <div class="avatar"></div>
+          <div class="avatar">A</div>
           <div class="greeting">Hi, Alex</div>
         </div>
         <div class="hamburger clickable" id="todayMenuBtn">
@@ -1036,6 +1614,40 @@
       </div>
     </div>
 
+    <!-- ============ TODAY EMPTY (first-time / no goals) ============ -->
+    <div class="scrn" id="today-empty">
+      <div class="te-top">
+        <div class="te-greet">
+          <div class="avatar">A</div>
+          <div class="name">Hi, Alex</div>
+        </div>
+        <div class="hamburger clickable">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="te-center">
+        <svg class="te-ast" viewBox="0 0 100 100">
+          <g class="ast-outline">
+            <rect x="43" y="1" width="14" height="98" rx="2.5"/>
+            <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(60 50 50)"/>
+            <rect x="43" y="1" width="14" height="98" rx="2.5" transform="rotate(120 50 50)"/>
+          </g>
+          <g class="ast-interior">
+            <rect x="45" y="3" width="10" height="94" rx="2"/>
+            <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(60 50 50)"/>
+            <rect x="45" y="3" width="10" height="94" rx="2" transform="rotate(120 50 50)"/>
+          </g>
+        </svg>
+
+        <div class="te-title">No goals<br>yet<span class="red">*</span></div>
+        <div class="te-sub">That's allowed. When you're ready, add your first one. Or don't.</div>
+
+        <div class="te-cta" data-nav="add-goal">+ Add your first F<span class="red-ast">*</span>cking goal</div>
+        <div class="te-skip">Fool everyone. Just not yourself.</div>
+      </div>
+    </div>
+
     <!-- ============ GOAL DETAIL ============ -->
     <div class="scrn" id="goal-detail">
       <div class="topbar">
@@ -1043,9 +1655,9 @@
         <span class="tb-label">Goal</span>
         <span class="tb-action" id="gdMenuTrigger">···</span>
         <div class="menu-popover" id="gdMenu">
-          <div class="menu-item">Edit</div>
-          <div class="menu-item">Archive</div>
-          <div class="menu-item danger">Delete</div>
+          <div class="menu-item" data-nav="edit-goal">Edit</div>
+          <div class="menu-item" data-modal="archive-modal">Archive</div>
+          <div class="menu-item danger" data-modal="delete-modal">Delete</div>
         </div>
       </div>
 
@@ -1096,7 +1708,7 @@
       </div>
 
       <div class="section-block">
-        <div class="sb-head"><span class="sb-title">Last 7 days</span><span class="sb-action">All-time ›</span></div>
+        <div class="sb-head"><span class="sb-title">Last 7 days</span><span class="sb-action clickable" data-nav="stats" style="cursor: pointer;">All-time ›</span></div>
         <div class="bar-chart">
           <div class="bc-body">
             <div class="bc-y-axis">
@@ -1188,7 +1800,7 @@
 
       <div class="form-section">
         <div class="form-label">Repeat</div>
-        <div class="setting-row">
+        <div class="setting-row" data-sheet="repeat-sheet">
           <span class="label-text">Every day</span>
           <span><span class="value-text">Daily</span><span class="caret">›</span></span>
         </div>
@@ -1196,7 +1808,7 @@
 
       <div class="form-section">
         <div class="form-label">Duration</div>
-        <div class="setting-row">
+        <div class="setting-row" data-sheet="duration-sheet">
           <span class="label-text">Ongoing</span>
           <span><span class="value-text">No end</span><span class="caret">›</span></span>
         </div>
@@ -1204,7 +1816,7 @@
 
       <div class="form-section">
         <div class="form-label">Starts</div>
-        <div class="setting-row">
+        <div class="setting-row" data-sheet="starts-sheet">
           <span class="label-text">Today</span>
           <span><span class="value-text">Fri 15 May</span><span class="caret">›</span></span>
         </div>
@@ -1220,7 +1832,7 @@
       </div>
 
       <div class="profile-head">
-        <div class="avatar-big"></div>
+        <div class="avatar-big clickable" data-nav="profile-photo" style="cursor: pointer;">A</div>
         <div>
           <div class="p-name">Alex Çakır</div>
           <div class="p-meta">@alex · since Jan '26</div>
@@ -1567,11 +2179,11 @@
       <div class="archive-header">Old goals</div>
       <div class="archive-sub">17 archived · 6 completed fully</div>
 
-      <div class="filter-row">
-        <div class="filter-chip active">All</div>
-        <div class="filter-chip">Completed</div>
-        <div class="filter-chip">Paused</div>
-        <div class="filter-chip">Partial</div>
+      <div class="filter-row" id="archiveFilters">
+        <div class="filter-chip active" data-filter="all">All</div>
+        <div class="filter-chip" data-filter="completed">Completed</div>
+        <div class="filter-chip" data-filter="paused">Paused</div>
+        <div class="filter-chip" data-filter="partial">Partial</div>
       </div>
 
       <div class="arch-item clickable" data-nav="goal-detail">
@@ -1634,27 +2246,36 @@
       <div class="sec-group">
         <div class="sec-label">Account</div>
         <div class="set-card">
-          <div class="set-row"><span class="set-name">Display name</span><div class="set-right"><span class="set-value">Alex</span><span class="set-arrow">›</span></div></div>
-          <div class="set-row"><span class="set-name">Avatar</span><span class="set-arrow">›</span></div>
-          <div class="set-row"><span class="set-name">Username</span><div class="set-right"><span class="set-value">@alex</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row" data-edit-field="display-name"><span class="set-name">Display name</span><div class="set-right"><span class="set-value" id="displayNameValue">Alex</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row" data-nav="profile-photo"><span class="set-name">Avatar</span><span class="set-arrow">›</span></div>
+          <div class="set-row" data-edit-field="username"><span class="set-name">Username</span><div class="set-right"><span class="set-value" id="usernameValue">@alex</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row" data-nav="signin"><span class="set-name">Sign in with Apple</span><span class="set-arrow">›</span></div>
         </div>
       </div>
 
       <div class="sec-group">
         <div class="sec-label">App</div>
         <div class="set-card">
-          <div class="set-row"><span class="set-name">Theme</span><div class="set-right"><span class="set-value">Light</span><span class="set-arrow">›</span></div></div>
-          <div class="set-row"><span class="set-name">Streak modals</span><div class="ios-toggle on"></div></div>
-          <div class="set-row"><span class="set-name">Sounds</span><div class="ios-toggle"></div></div>
-          <div class="set-row"><span class="set-name">Haptics</span><div class="ios-toggle on"></div></div>
+          <div class="set-row" data-sheet="theme-sheet"><span class="set-name">Theme</span><div class="set-right"><span class="set-value">Light</span><span class="set-arrow">›</span></div></div>
+          <div class="set-row" data-toggle-name="Streak modals">
+            <span><span class="set-name">Streak modals</span><span style="display:block; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--gray-text); margin-top:3px; letter-spacing:0.04em;">Day 3, 7, 30, 100, 365 milestones</span></span>
+            <div class="ios-toggle on"></div>
+          </div>
+          <div class="set-row" data-toggle-name="Sounds">
+            <span><span class="set-name">Sounds</span><span style="display:block; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--gray-text); margin-top:3px; letter-spacing:0.04em;">Soft tap on task complete</span></span>
+            <div class="ios-toggle"></div>
+          </div>
+          <div class="set-row" data-toggle-name="Haptics">
+            <span><span class="set-name">Haptics</span><span style="display:block; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--gray-text); margin-top:3px; letter-spacing:0.04em;">Subtle vibration on actions</span></span>
+            <div class="ios-toggle on"></div>
+          </div>
         </div>
       </div>
 
       <div class="sec-group">
         <div class="sec-label">Your Data</div>
         <div class="set-card">
-          <div class="set-row"><span class="set-name">Export</span><span class="set-arrow">›</span></div>
-          <div class="set-row danger"><span class="set-name">Reset everything</span><span class="set-arrow">›</span></div>
+          <div class="set-row danger" data-modal="reset-modal"><span class="set-name">Reset everything</span><span class="set-arrow">›</span></div>
         </div>
       </div>
 
@@ -1723,13 +2344,380 @@
       </div>
 
       <div class="about-links">
-        <div class="ab-link-row"><span>Send feedback</span><span class="arrow">›</span></div>
-        <div class="ab-link-row"><span>Privacy</span><span class="arrow">›</span></div>
-        <div class="ab-link-row"><span>Terms</span><span class="arrow">›</span></div>
-        <div class="ab-link-row"><span>Open-source acknowledgments</span><span class="arrow">›</span></div>
+        <div class="ab-link-row" data-toast="Email composer would open with caner@9-16.com."><span>Send feedback</span><span class="arrow">›</span></div>
+        <div class="ab-link-row" data-toast="Privacy policy would open in browser."><span>Privacy</span><span class="arrow">›</span></div>
+        <div class="ab-link-row" data-toast="Terms would open in browser."><span>Terms</span><span class="arrow">›</span></div>
+        <div class="ab-link-row" data-toast="Open-source list would open here."><span>Open-source acknowledgments</span><span class="arrow">›</span></div>
       </div>
 
       <div class="about-quote">You don't have to do this,<br>you know?</div>
+    </div>
+
+    <!-- ============ EDIT GOAL (reuses #add-goal structure) ============ -->
+    <div class="scrn" id="edit-goal">
+      <div class="ag-topbar">
+        <span class="ag-cancel" data-nav="goal-detail">Cancel</span>
+        <span class="ag-title">Edit Goal</span>
+        <span class="ag-save enabled" data-nav="goal-detail">Save</span>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Goal name</div>
+        <input class="goal-name-input" id="egName" type="text" value="Spring routine" maxlength="40">
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Things to do</div>
+        <div class="task-list">
+          <div class="task-item">
+            <span class="task-bullet">*</span>
+            <span class="task-text">Read 10 pages</span>
+            <span class="task-remove">×</span>
+          </div>
+          <div class="task-item">
+            <span class="task-bullet">*</span>
+            <span class="task-text">100 push-ups</span>
+            <span class="task-remove">×</span>
+          </div>
+          <div class="task-item">
+            <span class="task-bullet">*</span>
+            <span class="task-text">Call mom</span>
+            <span class="task-remove">×</span>
+          </div>
+        </div>
+        <div class="add-row">
+          <input class="task-input" type="text" placeholder="Add another...">
+          <button class="add-btn">+ Add</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Repeat</div>
+        <div class="setting-row" data-sheet="repeat-sheet">
+          <span class="label-text">Every day</span>
+          <span><span class="value-text">Daily</span><span class="caret">›</span></span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Duration</div>
+        <div class="setting-row" data-sheet="duration-sheet">
+          <span class="label-text">Ongoing</span>
+          <span><span class="value-text">No end</span><span class="caret">›</span></span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-label">Starts</div>
+        <div class="setting-row" data-sheet="starts-sheet">
+          <span class="label-text">Today</span>
+          <span><span class="value-text">Fri 15 May</span><span class="caret">›</span></span>
+        </div>
+      </div>
+
+      <div class="delete-link" data-modal="delete-modal">Delete this goal</div>
+    </div>
+
+    <!-- ============ PROFILE PHOTO CHANGE ============ -->
+    <div class="scrn" id="profile-photo">
+      <div class="topbar">
+        <span class="tb-back" data-nav="profile">‹</span>
+        <span class="tb-label">Change avatar</span>
+        <span class="tb-action"></span>
+      </div>
+
+      <div class="photo-preview">
+        <div class="photo-big">A</div>
+        <div class="photo-name">Alex Çakır</div>
+      </div>
+
+      <div class="ph-section-label">Choose source</div>
+      <div class="photo-options">
+        <div class="photo-option" data-toast="Camera would open here.">
+          <span>Take a photo</span>
+          <span class="arrow">›</span>
+        </div>
+        <div class="photo-option" data-toast="Photo library would open here.">
+          <span>Choose from library</span>
+          <span class="arrow">›</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; padding: 14px 16px; background: var(--gray-soft); border-radius: 10px; font-size: 12px; color: var(--gray-text-strong); line-height: 1.6; font-style: italic;">
+        No photo? No problem. We'll use your initials on a quiet background.
+      </div>
+    </div>
+
+    <!-- ============ BOTTOM SHEETS ============ -->
+    <div class="bottom-sheet-backdrop" id="sheetBackdrop"></div>
+
+    <!-- Repeat sheet -->
+    <div class="bottom-sheet" id="repeat-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title">Repeat</span>
+        <span class="sheet-done" data-sheet-close>Done</span>
+      </div>
+      <div class="sheet-row selected" data-repeat="daily">
+        <span><span class="sr-label">Every day</span><span class="sr-sub">7 days a week</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-repeat="weekdays">
+        <span><span class="sr-label">Weekdays</span><span class="sr-sub">Mon–Fri only</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-repeat="weekends">
+        <span><span class="sr-label">Weekends</span><span class="sr-sub">Sat & Sun only</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-repeat="specific" id="specificRow">
+        <span><span class="sr-label">Specific days</span><span class="sr-sub" id="specificSubText">Pick which days</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sub-options" id="daysPanel">
+        <div class="day-toggles">
+          <div class="day-pill">M</div>
+          <div class="day-pill">T</div>
+          <div class="day-pill">W</div>
+          <div class="day-pill">T</div>
+          <div class="day-pill">F</div>
+          <div class="day-pill">S</div>
+          <div class="day-pill">S</div>
+        </div>
+      </div>
+      <div class="sheet-row" data-repeat="custom" id="customRepeatRow">
+        <span><span class="sr-label">Custom</span><span class="sr-sub" id="customRepeatSub">e.g. every Monday, first of month</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+
+      <!-- Custom Repeat sub-panel -->
+      <div class="custom-repeat-panel" id="customRepeatPanel">
+        <div class="crp-inner">
+          <div class="crp-row">
+            <span class="crp-label">Every</span>
+            <input class="crp-input" id="crpEvery" type="number" min="1" max="99" value="2">
+            <div class="crp-segment" id="crpUnit">
+              <div class="crp-seg on" data-unit="day">Day</div>
+              <div class="crp-seg" data-unit="week">Week</div>
+              <div class="crp-seg" data-unit="month">Month</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: var(--gray-text); padding: 4px 2px 8px; line-height: 1.5; font-style: italic;">
+            <span id="crpExample">Happens every 2 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Duration sheet -->
+    <div class="bottom-sheet" id="duration-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title">Duration</span>
+        <span class="sheet-done" data-sheet-close>Done</span>
+      </div>
+      <div class="sheet-row selected" data-duration="ongoing">
+        <span><span class="sr-label">Ongoing</span><span class="sr-sub">No end date</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-duration="7"><span><span class="sr-label">7 days</span><span class="sr-sub">A short sprint</span></span><span class="sr-marker">*</span></div>
+      <div class="sheet-row" data-duration="14"><span><span class="sr-label">14 days</span><span class="sr-sub">Two weeks</span></span><span class="sr-marker">*</span></div>
+      <div class="sheet-row" data-duration="30"><span><span class="sr-label">30 days</span><span class="sr-sub">A month challenge</span></span><span class="sr-marker">*</span></div>
+      <div class="sheet-row" data-duration="60"><span><span class="sr-label">60 days</span><span class="sr-sub">Two months</span></span><span class="sr-marker">*</span></div>
+      <div class="sheet-row" data-duration="90"><span><span class="sr-label">90 days</span><span class="sr-sub">A quarter</span></span><span class="sr-marker">*</span></div>
+      <div class="sheet-row" data-duration="custom" id="customDurationRow"><span><span class="sr-label">Custom range</span><span class="sr-sub" id="customDurationSub">Pick start & end dates</span></span><span class="sr-marker">*</span></div>
+      <div class="cd-range" id="customDurationPanel">
+        <div class="cd-range-inner">
+          <div class="cd-field" data-toast="Date picker for start would open.">
+            <div class="lbl">Start</div>
+            <div class="val">Fri 15 May</div>
+          </div>
+          <div class="cd-field" data-toast="Date picker for end would open.">
+            <div class="lbl">End</div>
+            <div class="val">Pick a date</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Starts sheet with date picker -->
+    <div class="bottom-sheet" id="starts-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title">Starts</span>
+        <span class="sheet-done" data-sheet-close>Done</span>
+      </div>
+      <div class="sheet-row selected" data-starts="today">
+        <span><span class="sr-label">Today</span><span class="sr-sub">Fri 15 May 2026</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-starts="tomorrow">
+        <span><span class="sr-label">Tomorrow</span><span class="sr-sub">Sat 16 May 2026</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-starts="pick">
+        <span><span class="sr-label">Pick a date</span><span class="sr-sub">Calendar picker</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+
+      <div class="dp-calendar">
+        <div class="dp-head">
+          <div class="dp-month">May 2026</div>
+          <div class="dp-nav"><span>‹</span><span>›</span></div>
+        </div>
+        <div class="dp-grid">
+          <div class="dp-wd">M</div><div class="dp-wd">T</div><div class="dp-wd">W</div><div class="dp-wd">T</div><div class="dp-wd">F</div><div class="dp-wd">S</div><div class="dp-wd">S</div>
+          <div class="dp-day empty"></div><div class="dp-day empty"></div><div class="dp-day empty"></div>
+          <div class="dp-day">1</div><div class="dp-day">2</div><div class="dp-day">3</div><div class="dp-day">4</div>
+          <div class="dp-day">5</div><div class="dp-day">6</div><div class="dp-day">7</div><div class="dp-day">8</div><div class="dp-day">9</div><div class="dp-day">10</div><div class="dp-day">11</div>
+          <div class="dp-day">12</div><div class="dp-day">13</div><div class="dp-day">14</div><div class="dp-day today selected">15</div><div class="dp-day">16</div><div class="dp-day">17</div><div class="dp-day">18</div>
+          <div class="dp-day">19</div><div class="dp-day">20</div><div class="dp-day">21</div><div class="dp-day">22</div><div class="dp-day">23</div><div class="dp-day">24</div><div class="dp-day">25</div>
+          <div class="dp-day">26</div><div class="dp-day">27</div><div class="dp-day">28</div><div class="dp-day">29</div><div class="dp-day">30</div><div class="dp-day">31</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit field sheet (Display name / Username — reusable) -->
+    <div class="bottom-sheet" id="edit-field-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title" id="editFieldTitle">Edit field</span>
+        <span class="sheet-done" id="editFieldSave">Save</span>
+      </div>
+      <div style="padding: 8px 0 4px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-text); font-weight: 600; margin-bottom: 8px;" id="editFieldLabel">Display name</div>
+        <input type="text" id="editFieldInput" value="Alex" maxlength="40" style="width: 100%; background: var(--card); border: 1.5px solid var(--gray-line); border-radius: 10px; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--black); outline: none;">
+        <div style="font-size: 11px; color: var(--gray-text); margin-top: 8px;" id="editFieldHint">Visible only to you in v1. Used as your name on cards.</div>
+      </div>
+    </div>
+
+    <!-- Export sheet -->
+    <div class="bottom-sheet" id="export-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title">Export your data</span>
+        <span class="sheet-done" data-sheet-close>Done</span>
+      </div>
+      <div style="font-size: 12px; color: var(--gray-text-strong); padding: 4px 4px 14px; line-height: 1.5;">
+        Everything stays yours. Pick a format.
+      </div>
+      <div class="sheet-row" data-toast="JSON file would be saved to Files.">
+        <span><span class="sr-label">JSON</span><span class="sr-sub">All data, machine-readable</span></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-mid);">.json</span>
+      </div>
+      <div class="sheet-row" data-toast="CSV file would be saved to Files.">
+        <span><span class="sr-label">CSV</span><span class="sr-sub">Spreadsheet-friendly, by goal</span></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-mid);">.csv</span>
+      </div>
+      <div class="sheet-row" data-toast="Markdown summary would open in share sheet.">
+        <span><span class="sr-label">Markdown summary</span><span class="sr-sub">Human-readable, share-friendly</span></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-mid);">.md</span>
+      </div>
+    </div>
+
+    <!-- Theme sheet (Settings → Theme) -->
+    <div class="bottom-sheet" id="theme-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="sheet-title">Theme</span>
+        <span class="sheet-done" data-sheet-close>Done</span>
+      </div>
+      <div class="sheet-row selected" data-theme="light">
+        <span><span class="sr-label">Light</span><span class="sr-sub">Default · paper white</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-theme="dark">
+        <span><span class="sr-label">Dark</span><span class="sr-sub">Coming in v2</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+      <div class="sheet-row" data-theme="system">
+        <span><span class="sr-label">Match system</span><span class="sr-sub">Coming in v2</span></span>
+        <span class="sr-marker">*</span>
+      </div>
+    </div>
+
+    <!-- ============ MODALS ============ -->
+    <!-- Delete goal modal -->
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal-card">
+        <div class="modal-ast">*</div>
+        <div class="modal-title">Delete this goal?</div>
+        <div class="modal-text">142 days of data goes with it. You can't undo this.</div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" data-modal-close>Cancel</button>
+          <button class="modal-btn modal-btn-danger" data-modal-confirm="delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archive goal modal -->
+    <div class="modal-overlay" id="archive-modal">
+      <div class="modal-card">
+        <div class="modal-ast">*</div>
+        <div class="modal-title">Archive this goal?</div>
+        <div class="modal-text">It moves to your archive. Data stays. You can restart it any time.</div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" data-modal-close>Cancel</button>
+          <button class="modal-btn modal-btn-confirm" data-modal-confirm="archive">Archive</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apple Sign In simulation modal (mimics iOS native sheet) -->
+    <div class="modal-overlay" id="apple-signin-modal">
+      <div class="modal-card" style="text-align: left; padding: 0; overflow: hidden;">
+        <!-- Apple-style sheet top: glyph + brand -->
+        <div style="background: #f5f5f7; padding: 18px 18px 14px; border-bottom: 1px solid #e3e3e6; text-align: center;">
+          <div style="font-size: 28px; line-height: 1; margin-bottom: 6px;"></div>
+          <div style="font-family: -apple-system, 'SF Pro Text', sans-serif; font-weight: 600; font-size: 13px; color: #1d1d1f;">Use your Apple ID</div>
+          <div style="font-family: -apple-system, 'SF Pro Text', sans-serif; font-size: 11px; color: #6e6e73; margin-top: 2px;">to sign in to EFD</div>
+        </div>
+
+        <!-- Account preview -->
+        <div style="padding: 16px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e3e3e6;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--black); display: flex; align-items: center; justify-content: center; color: white; font-family: 'Big Shoulders Display'; font-weight: 900; font-size: 16px;">A</div>
+          <div>
+            <div style="font-family: -apple-system, sans-serif; font-weight: 600; font-size: 14px; color: var(--black);">Alex Çakır</div>
+            <div style="font-family: -apple-system, sans-serif; font-size: 12px; color: #6e6e73;">alex@icloud.com</div>
+          </div>
+        </div>
+
+        <!-- Email options -->
+        <div style="padding: 14px 18px; font-family: -apple-system, sans-serif; font-size: 13px; color: var(--black); border-bottom: 1px solid #e3e3e6;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="color: var(--highlight); font-weight: 700;">✓</span>
+            <span>Share My Email</span>
+          </div>
+          <div style="font-size: 11px; color: #6e6e73; padding-left: 20px;">alex@icloud.com</div>
+        </div>
+
+        <!-- Face ID confirm -->
+        <div style="padding: 18px; text-align: center;">
+          <div style="font-family: -apple-system, sans-serif; font-size: 13px; color: var(--black); margin-bottom: 12px; font-weight: 500;">Continue with Face ID</div>
+          <div style="display: inline-block; padding: 14px; border: 2px solid var(--black); border-radius: 12px; margin-bottom: 14px;">
+            <div style="font-size: 24px; line-height: 1;">⌂</div>
+          </div>
+          <div style="font-family: -apple-system, sans-serif; font-size: 11px; color: #6e6e73;">Double click side button to confirm</div>
+        </div>
+
+        <div style="display: flex; border-top: 1px solid #e3e3e6;">
+          <button class="modal-btn" style="flex: 1; background: #f5f5f7; color: var(--black); padding: 14px; border: none; border-right: 1px solid #e3e3e6; font-family: -apple-system, sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; border-radius: 0;" data-modal-close>Cancel</button>
+          <button class="modal-btn" style="flex: 1; background: var(--black); color: white; padding: 14px; border: none; font-family: -apple-system, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 0;" data-modal-confirm="apple-signin">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset everything modal -->
+    <div class="modal-overlay" id="reset-modal">
+      <div class="modal-card">
+        <div class="modal-ast">*</div>
+        <div class="modal-title">Reset everything?</div>
+        <div class="modal-text">All goals, all data, all history. Gone. No backup. Sure?</div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" data-modal-close>Cancel</button>
+          <button class="modal-btn modal-btn-danger" data-modal-confirm="reset">Reset</button>
+        </div>
+      </div>
     </div>
 
     <!-- Toast -->
@@ -1766,6 +2754,315 @@
     if (navEl) {
       e.stopPropagation();
       showScreen(navEl.dataset.nav);
+    }
+  });
+
+  // ============ BOTTOM SHEETS ============
+  function openSheet(id) {
+    const sheet = document.getElementById(id);
+    const backdrop = document.getElementById('sheetBackdrop');
+    if (!sheet || !backdrop) return;
+    document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+    sheet.classList.add('open');
+    backdrop.classList.add('open');
+  }
+  function closeAllSheets() {
+    document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+    const backdrop = document.getElementById('sheetBackdrop');
+    if (backdrop) backdrop.classList.remove('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const sheetTrigger = e.target.closest('[data-sheet]');
+    if (sheetTrigger && !e.target.closest('.bottom-sheet')) {
+      e.stopPropagation();
+      openSheet(sheetTrigger.dataset.sheet);
+    }
+    if (e.target.closest('[data-sheet-close]')) {
+      closeAllSheets();
+    }
+    if (e.target.id === 'sheetBackdrop') {
+      closeAllSheets();
+    }
+  });
+
+  // Repeat sheet — selection + "specific days" reveal
+  (function() {
+    const repeatRows = document.querySelectorAll('#repeat-sheet .sheet-row');
+    const daysPanel = document.getElementById('daysPanel');
+    const specificSubText = document.getElementById('specificSubText');
+    const dayPills = document.querySelectorAll('#daysPanel .day-pill');
+    const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+    function updateSpecificSubText() {
+      const onDays = Array.from(dayPills)
+        .map((p, i) => p.classList.contains('on') ? labels[i] : null)
+        .filter(Boolean);
+      specificSubText.textContent = onDays.length === 0 ? 'Pick which days' : onDays.join(' · ');
+    }
+
+    const customPanel = document.getElementById('customRepeatPanel');
+    const customSub = document.getElementById('customRepeatSub');
+    const crpEvery = document.getElementById('crpEvery');
+    const crpUnit = document.getElementById('crpUnit');
+    const crpExample = document.getElementById('crpExample');
+
+    function updateCrpExample() {
+      const n = parseInt(crpEvery.value || '1', 10);
+      const unitEl = crpUnit && crpUnit.querySelector('.on');
+      const unit = unitEl ? unitEl.dataset.unit : 'day';
+      const text = `Happens every ${n} ${unit}${n > 1 ? 's' : ''}`;
+      if (crpExample) crpExample.textContent = text;
+      if (customSub) customSub.textContent = text;
+    }
+    if (crpEvery) crpEvery.addEventListener('input', updateCrpExample);
+    if (crpUnit) {
+      crpUnit.querySelectorAll('.crp-seg').forEach(seg => {
+        seg.addEventListener('click', (e) => {
+          e.stopPropagation();
+          crpUnit.querySelectorAll('.crp-seg').forEach(s => s.classList.remove('on'));
+          seg.classList.add('on');
+          updateCrpExample();
+        });
+      });
+    }
+
+    repeatRows.forEach(row => {
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        repeatRows.forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        if (row.dataset.repeat === 'specific') {
+          daysPanel.classList.add('open');
+          if (customPanel) customPanel.classList.remove('open');
+        } else if (row.dataset.repeat === 'custom') {
+          if (customPanel) customPanel.classList.add('open');
+          daysPanel.classList.remove('open');
+          updateCrpExample();
+        } else {
+          daysPanel.classList.remove('open');
+          if (customPanel) customPanel.classList.remove('open');
+        }
+      });
+    });
+
+    dayPills.forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pill.classList.toggle('on');
+        updateSpecificSubText();
+      });
+    });
+  })();
+
+  // Duration sheet — selection + custom range panel reveal
+  (function() {
+    const rows = document.querySelectorAll('#duration-sheet .sheet-row');
+    const customPanel = document.getElementById('customDurationPanel');
+    rows.forEach(row => {
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rows.forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        if (row.dataset.duration === 'custom') {
+          if (customPanel) customPanel.classList.add('open');
+        } else {
+          if (customPanel) customPanel.classList.remove('open');
+        }
+      });
+    });
+  })();
+
+  // ============ SETTINGS TOGGLE FEEDBACK ============
+  (function() {
+    document.querySelectorAll('#settings [data-toggle-name]').forEach(row => {
+      const toggle = row.querySelector('.ios-toggle');
+      const name = row.dataset.toggleName;
+      if (!toggle) return;
+      // Listen to clicks on the row (delegates to toggle)
+      row.addEventListener('click', (e) => {
+        // Skip if click was on the toggle itself (toggle has its own handler)
+        if (e.target.closest('.ios-toggle')) {
+          setTimeout(() => {
+            const isOn = toggle.classList.contains('on');
+            showToast(`${name}: ${isOn ? 'on' : 'off'}`);
+          }, 50);
+        }
+      });
+    });
+  })();
+
+  // Starts sheet — simple selection + calendar day selection
+  (function() {
+    const rows = document.querySelectorAll('#starts-sheet .sheet-row');
+    rows.forEach(row => {
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rows.forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+      });
+    });
+    const dpDays = document.querySelectorAll('#starts-sheet .dp-day');
+    dpDays.forEach(d => {
+      if (d.classList.contains('empty')) return;
+      d.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dpDays.forEach(x => x.classList.remove('selected'));
+        d.classList.add('selected');
+        // Update "Pick a date" sub-text
+        const pickRow = document.querySelector('[data-starts="pick"] .sr-sub');
+        if (pickRow) pickRow.textContent = `${d.textContent} May 2026`;
+        rows.forEach(r => r.classList.remove('selected'));
+        document.querySelector('[data-starts="pick"]').classList.add('selected');
+      });
+    });
+  })();
+
+  // Theme sheet
+  (function() {
+    const rows = document.querySelectorAll('#theme-sheet .sheet-row');
+    rows.forEach(row => {
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (row.dataset.theme === 'light') {
+          rows.forEach(r => r.classList.remove('selected'));
+          row.classList.add('selected');
+        } else {
+          // v2 features — show a toast
+          showToast('Coming in v2.');
+        }
+      });
+    });
+  })();
+
+  // ============ GENERIC TOAST TRIGGER ============
+  // Any element with data-toast="message" will show that message in the toast on click
+  document.addEventListener('click', (e) => {
+    const toastEl = e.target.closest('[data-toast]');
+    if (toastEl) {
+      e.stopPropagation();
+      showToast(toastEl.dataset.toast);
+    }
+  });
+
+  // ============ EDIT FIELD (Display name / Username) ============
+  (function() {
+    const fieldConfig = {
+      'display-name': { title: 'Display name', label: 'Display name', hint: 'Visible only to you in v1. Used as your name on cards.', valueId: 'displayNameValue', current: 'Alex' },
+      'username':     { title: 'Username',     label: 'Username',     hint: 'Lowercase, no spaces. Used in v2 for sharing.',         valueId: 'usernameValue',    current: '@alex' }
+    };
+    const titleEl = document.getElementById('editFieldTitle');
+    const labelEl = document.getElementById('editFieldLabel');
+    const hintEl = document.getElementById('editFieldHint');
+    const inputEl = document.getElementById('editFieldInput');
+    const saveEl = document.getElementById('editFieldSave');
+    let activeField = null;
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-edit-field]');
+      if (!trigger || e.target.closest('.bottom-sheet')) return;
+      e.stopPropagation();
+      const key = trigger.dataset.editField;
+      const conf = fieldConfig[key];
+      if (!conf) return;
+      activeField = conf;
+      titleEl.textContent = conf.title;
+      labelEl.textContent = conf.label;
+      hintEl.textContent = conf.hint;
+      inputEl.value = conf.current;
+      setTimeout(() => inputEl.focus(), 200);
+      openSheet('edit-field-sheet');
+    });
+
+    if (saveEl) {
+      saveEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!activeField) { closeAllSheets(); return; }
+        const newVal = inputEl.value.trim();
+        if (newVal) {
+          const target = document.getElementById(activeField.valueId);
+          if (target) target.textContent = newVal;
+          activeField.current = newVal;
+        }
+        closeAllSheets();
+        showToast('Saved.');
+      });
+    }
+  })();
+
+  // ============ ARCHIVE FILTER CHIPS ============
+  (function() {
+    const chips = document.querySelectorAll('#archiveFilters .filter-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  })();
+
+  // ============ EDIT GOAL TASK REMOVE ============
+  (function() {
+    document.querySelectorAll('#edit-goal .task-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = btn.closest('.task-item');
+        if (item) item.remove();
+      });
+    });
+    // Save button feedback
+    const saveBtn = document.querySelector('#edit-goal .ag-save');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', (e) => {
+        showToast('Changes saved.');
+      });
+    }
+  })();
+
+  // ============ MODALS ============
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.add('open');
+  }
+  function closeAllModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  }
+
+  document.addEventListener('click', (e) => {
+    const modalTrigger = e.target.closest('[data-modal]');
+    if (modalTrigger && !e.target.closest('.modal-overlay')) {
+      e.stopPropagation();
+      openModal(modalTrigger.dataset.modal);
+      return;
+    }
+    if (e.target.closest('[data-modal-close]')) {
+      closeAllModals();
+      return;
+    }
+    const confirmBtn = e.target.closest('[data-modal-confirm]');
+    if (confirmBtn) {
+      const type = confirmBtn.dataset.modalConfirm;
+      closeAllModals();
+      if (type === 'delete') {
+        showToast('Goal deleted.');
+        setTimeout(() => showScreen('today'), 600);
+      } else if (type === 'archive') {
+        showToast('Goal archived.');
+        setTimeout(() => showScreen('today'), 600);
+      } else if (type === 'reset') {
+        showToast('Reset complete.');
+        setTimeout(() => showScreen('today-empty'), 600);
+      } else if (type === 'apple-signin') {
+        showToast('Signed in. Welcome back.');
+        setTimeout(() => showScreen('today'), 600);
+      }
+      return;
+    }
+    // Tap backdrop (outside card) closes modal
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+      closeAllModals();
     }
   });
 
